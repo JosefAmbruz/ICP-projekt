@@ -16,7 +16,7 @@ int main() {
     char buffer[1024] = {0};
 
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-        println(stderr, "Socket creation error");
+        std::cerr << "Socket creation error" << std::endl;
         return -1;
     }
 
@@ -24,18 +24,18 @@ int main() {
     serv_addr.sin_port = htons(PORT);
 
     if (inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0) {
-        println(stderr, "Invalid address/Address not supported");
+        std::cerr << "Invalid address/Address not supported" << std::endl;
         return -1;
     }
 
     if (connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) {
-        println(stderr, "Connection Failed");
+        std::cerr << "Connection Failed" << std::endl;
         return -1;
     }
 
     string input;
     while (true) {
-        println("Enter command (STATUS, EVAL <expression>, or QUIT): ");
+        std::cout << "Enter command (STATUS, EVAL <expression>, or QUIT): " << std::endl;
         getline(cin, input);
 
         if (input == "QUIT") break;
@@ -45,9 +45,9 @@ int main() {
         int valread = read(sock, buffer, 1024);
         if (valread > 0) {
             buffer[valread] = '\0';
-            println("Server response: {}", buffer);
+            std::cout << "Server response: " << buffer << std::endl;
         } else {
-            println(stderr, "Error reading from socket");
+            std::cerr << "Error reading from socket" << std::endl;
         }
     }
 
