@@ -63,6 +63,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
       <widget class="QFrame" name="frame_mainPanel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="styleSheet">
         <string notr="true">QWidget#frame {
     background-color: #ccc;  
@@ -86,6 +92,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
           </property>
           <property name="text">
            <string>➕ State</string>
+          </property>
+          <property name="checkable">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -135,17 +144,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <widget class="QWidget" name="widget_canvas" native="true">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>527</height>
-           </size>
-          </property>
-         </spacer>
+         <widget class="QWidget" name="nodeCanvasContainer" native="true"/>
         </item>
        </layout>
       </widget>

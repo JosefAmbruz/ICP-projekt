@@ -2,6 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QtNodes/BasicGraphicsScene>
+#include "DynamicPortsModel.hpp"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -17,7 +20,14 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_button_addState_clicked();
+
 private:
     Ui::MainWindow *ui;
+    void initNodeCanvas();
+    void initializeModel();
+    DynamicPortsModel* graphModel;
+    QtNodes::BasicGraphicsScene* nodeScene;
 };
 #endif // MAINWINDOW_H
