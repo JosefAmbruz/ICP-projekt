@@ -5,12 +5,10 @@
  *       pridat inputEvent u prechodu?
  */
 
-#include <iostream>
-#include <fstream>
 #include <sstream>
-#include <string>
 #include <algorithm>
-#include "automaton-data.hpp" // trida Automaton
+#include "parser.hpp"
+#include "automaton-data.hpp"
 
 enum class ParserState {
     EXPECT_AUTOMATON,
@@ -199,51 +197,4 @@ void parseAutomaton(istream& in, Automaton& automaton) {
                 break;
         }
     }
-}
-
-
-// TEST
-int main(int argc, char* argv[]) {
-    if (argc < 2) {
-        cerr << "Usage: " << argv[0] << " input.txt\n";
-        return 1;
-    }
-
-    ifstream file(argv[1]);
-    if (!file) {
-        std::cerr << "Failed to open file: " << argv[1] << "\n";
-        return 1;
-    }
-
-    Automaton automaton;
-    parseAutomaton(file, automaton);
-
-    cout << "Automaton name: " << automaton.getName() << "\n";
-    cout << "Description: " << automaton.getDescription() << "\n";
-    cout << "Start state: " << automaton.getStartName() << "\n";
-
-    cout << "Final states:\n";
-    for (const auto& s : automaton.getFinalStates()) {
-        cout << "  " << s << "\n";
-    }
-
-    cout << "Variables:\n";
-    for (const auto& [name, value] : automaton.getVariables()) {
-        cout << "  " << name << " = " << value << "\n";
-    }
-
-    cout << "States:\n";
-    for (const auto& [name, _] : automaton.getStates()) {
-        cout << "  " << name << ":\n";
-        cout << automaton.getStateAction(name) << "\n";
-    }
-
-    cout << "Transitions:\n";
-    for (const auto& tr : automaton.getTransitions()) {
-        cout << "  " << tr.fromState << " -> " << tr.toState << "\n";
-        cout << "    Condition: " << tr.condition << "\n";
-        cout << "    Delay: " << tr.delay << "\n";
-    }
-
-    return 0;
 }

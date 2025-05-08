@@ -12,7 +12,6 @@ struct Transition {
     string fromState;
     string toState;
     string condition;  // Bool vyraz nad promemennymi
-    string inputEvent; // Pozadovana vstupni udalost TODO!!!
     int delay = 0;
 };
 
