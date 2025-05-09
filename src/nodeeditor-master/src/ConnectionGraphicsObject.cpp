@@ -203,6 +203,8 @@ void ConnectionGraphicsObject::paint(QPainter *painter,
 
 void ConnectionGraphicsObject::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    update();
+    nodeScene()->connectionClicked(connectionId());
     QGraphicsItem::mousePressEvent(event);
 }
 
