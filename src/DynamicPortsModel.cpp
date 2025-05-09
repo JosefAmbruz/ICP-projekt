@@ -9,7 +9,7 @@
 #include <iterator>
 
 DynamicPortsModel::DynamicPortsModel()
-    : _nextNodeId{0}
+    : _nextNodeId{1}
 {}
 
 DynamicPortsModel::~DynamicPortsModel()
@@ -65,6 +65,14 @@ NodeId DynamicPortsModel::addNode(QString const nodeType)
     // Create new node.
     _nodeIds.insert(newId);
 
+    // Add a default name to the node
+    QString nodeName = "State ";
+    nodeName.append(QString::fromStdString(std::to_string(newId)));
+    _nodeNames[newId] = nodeName;
+
+    // Add a default code to the node:
+    _nodeActionCodes[newId] = "# Enter code here:\n";
+
     Q_EMIT nodeCreated(newId);
 
     return newId;
@@ -78,6 +86,9 @@ bool DynamicPortsModel::connectionPossible(ConnectionId const connectionId) cons
 void DynamicPortsModel::addConnection(ConnectionId const connectionId)
 {
     _connectivity.insert(connectionId);
+
+    // Add a default transition condition code (just a comment)
+    _connectionCodes[connectionId] = "# Enter a transition condition\n";
 
     Q_EMIT connectionCreated(connectionId);
 }
@@ -124,7 +135,7 @@ QVariant DynamicPortsModel::nodeData(NodeId nodeId, NodeRole role) const
         break;
 
     case NodeRole::Caption:
-        result = QString("Node");
+        result = _nodeNames.at(nodeId);
         break;
 
     case NodeRole::Style: {
@@ -176,6 +187,8 @@ bool DynamicPortsModel::setNodeData(NodeId nodeId, NodeRole role, QVariant value
         break;
 
     case NodeRole::Caption:
+        _nodeNames[nodeId] = value.value<QString>();
+        result = true;
         break;
 
     case NodeRole::Style:
@@ -251,6 +264,9 @@ bool DynamicPortsModel::deleteConnection(ConnectionId const connectionId)
 {
     bool disconnected = false;
 
+    // remove the connection code
+    _connectionCodes.erase(connectionId);
+
     auto it = _connectivity.find(connectionId);
 
     if (it != _connectivity.end()) {
@@ -267,6 +283,10 @@ bool DynamicPortsModel::deleteConnection(ConnectionId const connectionId)
 
 bool DynamicPortsModel::deleteNode(NodeId const nodeId)
 {
+
+    _nodeNames.erase(nodeId);
+    _nodeActionCodes.erase(nodeId);
+
     // Delete connections to this node first.
     auto connectionIds = allConnectionIds(nodeId);
     for (auto &cId : connectionIds) {

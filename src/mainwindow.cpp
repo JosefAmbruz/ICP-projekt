@@ -111,6 +111,7 @@ void MainWindow::initNodeCanvas()
 
     // Create the QtNode scene
     nodeScene = new BasicGraphicsScene(*graphModel, this);
+
     qWarning() << "MODEF FROM SCENE " << &(nodeScene->graphModel());
 
     // Create a View for the scene
@@ -130,11 +131,82 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     initNodeCanvas();
+
+    connect(nodeScene, &BasicGraphicsScene::nodeClicked, this, &MainWindow::onNodeClicked);
+    connect(nodeScene, &BasicGraphicsScene::selectionChanged, this, &MainWindow::onNodeSelectionChanged);
+    connect(nodeScene, &BasicGraphicsScene::connectionClicked, this, & MainWindow::onConnectionClicked);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+/**
+ *    NODEEDITOR SIGNALS
+ *  ========================================================================
+ *  ========================================================================
+ */
+
+void MainWindow::onNodeClicked(NodeId const nodeId)
+{
+    qWarning() << "Node clicked! Id:" << nodeId;
+
+    // Save the node id that was clicked
+    lastSelectedNode = nodeId;
+
+    // Enable the code text edit and state name lineedit but disable conn edit
+    ui->textEdit_actionCode->setEnabled(true);
+    ui->lineEdit_stateName->setEnabled(true);
+    ui->textEdit_connCond->setEnabled(false);
+
+    // Set the textbox text to the code of clicked node
+    auto nodeText = graphModel->GetNodeActionCode(nodeId);
+    ui->textEdit_actionCode->setText(QString::fromStdString(nodeText));
+    auto nodeName = graphModel->GetNodeName(nodeId);
+    ui->lineEdit_stateName->setText(nodeName);
+}
+
+void MainWindow::onNodeSelectionChanged()
+{
+    qWarning() << "Selection Changed!";
+
+    // if there is nothing selected, disable the code textEdit and state name lineEdit
+    if(nodeScene->selectedItems().empty())
+    {
+        ui->textEdit_actionCode->setEnabled(false);
+        ui->lineEdit_stateName->setEnabled(false);
+        ui->textEdit_connCond->setEnabled(false);
+    }
+}
+
+void MainWindow::onConnectionClicked(ConnectionId const connId)
+{
+    qWarning() << "Connection clicked!";
+    // save the conn id
+    lastSelectedConnId = connId;
+
+    // while editing the connection id, disable state name line edit
+    ui->lineEdit_stateName->setEnabled(false);
+    // disable the textEdit for the code editing
+    ui->textEdit_actionCode->setEnabled(false);
+    // enable the textEdit for the connection condition code:
+    ui->textEdit_connCond->setEnabled(true);
+
+    // add the current connection code:
+    auto connCode = graphModel->GetConnectionCode(connId);
+    ui->textEdit_connCond->setText(connCode);
+}
+
+/**
+ *    UI ELEMENTS SINGALS
+ *  ========================================================================
+ *  ========================================================================
+ */
+
+void MainWindow::on_button_Run_clicked()
+{
+
 }
 
 void MainWindow::on_button_addState_clicked()
@@ -143,6 +215,26 @@ void MainWindow::on_button_addState_clicked()
     graphModel->setNodeData(id, NodeRole::Position, QPointF(0, 0));
     graphModel->setNodeData(id, NodeRole::OutPortCount, 1);
     graphModel->setNodeData(id, NodeRole::InPortCount, 1);
+}
 
+void MainWindow::on_textEdit_actionCode_textChanged()
+{
+    // update the code of selected node:
+    auto textEditContent = ui->textEdit_actionCode->toPlainText().toStdString();
+    graphModel->SetNodeActionCode(lastSelectedNode, textEditContent);
+}
+
+void MainWindow::on_lineEdit_stateName_textChanged(const QString &text)
+{
+    qWarning() << "Node name update!";
+    // update the name of selected node:
+    graphModel->SetNodeName(lastSelectedNode, text);
+}
+
+
+void MainWindow::on_textEdit_connCond_textChanged()
+{
+    auto connCode = ui->textEdit_connCond->toPlainText();
+    graphModel->SetConnectionCode(lastSelectedConnId, connCode);
 }
 

@@ -47,6 +47,21 @@ public:
                                                  PortType portType,
                                                  PortIndex portIndex) const override;
 
+    QString caption() const  { return QStringLiteral("Result"); }
+
+
+    QString GetNodeName(NodeId const nodeId) { return _nodeNames[nodeId]; }
+    void SetNodeName(NodeId const nodeId, QString name) {
+        _nodeNames[nodeId] = name;
+        setNodeData(nodeId, QtNodes::NodeRole::Caption, QVariant::fromValue(name));
+    }
+
+    void SetNodeActionCode(NodeId const nodeId, std::string code) { _nodeActionCodes[nodeId] = code; }
+    std::string GetNodeActionCode(NodeId const nodeId) { return _nodeActionCodes[nodeId]; }
+
+    void SetConnectionCode(ConnectionId const connId, QString code){ _connectionCodes[connId] = code; }
+    QString GetConnectionCode(ConnectionId const connId) { return _connectionCodes[connId]; }
+
     bool connectionExists(ConnectionId const connectionId) const override;
 
     NodeId addNode(QString const nodeType = QString()) override;
@@ -101,11 +116,10 @@ public:
 
 private:
     std::unordered_set<NodeId> _nodeIds;
+    std::unordered_map<NodeId, QString> _nodeNames;
+    std::unordered_map<NodeId, std::string> _nodeActionCodes;
+    std::unordered_map<ConnectionId, QString> _connectionCodes;
 
-    /// [Important] This is a user defined data structure backing your model.
-    /// In your case it could be anything else representing a graph, for example, a
-    /// table. Or a collection of structs with pointers to each other. Or an
-    /// abstract syntax tree, you name it.
     std::unordered_set<ConnectionId> _connectivity;
 
     mutable std::unordered_map<NodeId, NodeGeometryData> _nodeGeometryData;
