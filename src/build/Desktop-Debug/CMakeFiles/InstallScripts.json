@@ -1,0 +1,9 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/josef/Documents/FITVUT/2BIT-letn\u00ed/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/cmake_install.cmake",
+		"/home/josef/Documents/FITVUT/2BIT-letn\u00ed/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/nodeeditor_build/cmake_install.cmake",
+		"/home/josef/Documents/FITVUT/2BIT-letn\u00ed/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/nodeeditor_build/external/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

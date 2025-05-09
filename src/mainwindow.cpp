@@ -12,8 +12,11 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QVBoxLayout>
 
+
 #include <QApplication>
 #include "DynamicPortsModel.hpp"
+#include "interpret_generator.h"
+#include "spec_parser/automaton-data.hpp"
 
 using QtNodes::BasicGraphicsScene;
 using QtNodes::ConnectionStyle;
@@ -206,7 +209,13 @@ void MainWindow::onConnectionClicked(ConnectionId const connId)
 
 void MainWindow::on_button_Run_clicked()
 {
+    Automaton automaton;
 
+    InterpretGenerator generator;
+    QString file_path = QDir::currentPath() + "/interpret/output.py";
+
+    qDebug() << "File path:" << file_path;
+    generator.generate(automaton, file_path);
 }
 
 void MainWindow::on_button_addState_clicked()
