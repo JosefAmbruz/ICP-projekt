@@ -19,6 +19,10 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        interpret_generator.cpp
+        interpret_generator.h
+        spec_parser/automaton-data.cpp
+        spec_parser/automaton-data.hpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -28,6 +32,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         qvariablerow.h qvariablerow.cpp
         DynamicPortsModel.cpp PortAddRemoveWidget.cpp
         DynamicPortsModel.hpp PortAddRemoveWidget.hpp
+        controller.h controller.cpp
+        interpret_generator.h interpret_generator.cpp
+
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET icp APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

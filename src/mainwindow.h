@@ -23,6 +23,8 @@ public:
 private slots:
     void on_button_addState_clicked();
 
+    void on_button_Run_clicked();
+
 private:
     Ui::MainWindow *ui;
     void initNodeCanvas();
