@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QFileInfo>
+#include <QRegularExpression>
 
 // Helper to make a string safe as a Python identifier
 QString sanitize_python_identifier(std::string name) {
@@ -103,6 +104,18 @@ QString to_python_value_literal(const std::string& val_str) {
     return to_python_string_literal(val_str);
 }
 
+// Helper to replace variable names in code with variables.get('<name>')
+QString replace_variables_with_get(const QString& code, const std::unordered_map<std::string, std::string>& variables) {
+    QString result = code;
+    for (const auto& var_pair : variables) {
+        QString var_name = QString::fromStdString(var_pair.first);
+        // Using word boundaries to avoid partial replacements
+        QRegularExpression re("\\b" + QRegularExpression::escape(var_name) + "\\b");
+        result.replace(re, "variables.get('" + var_name + "')");
+    }
+    return result;
+}
+
 
 InterpretGenerator::InterpretGenerator(QObject *parent)
     : QObject{parent}
@@ -136,15 +149,20 @@ void InterpretGenerator::generate(const Automaton& automaton, const QString& out
             } else {
                 function_name = "action_" + sanitize_python_identifier(pair.first);
             }
-            functions[function_name] = QString::fromStdString(pair.second);   // function to function body map
-            state_action[QString::fromStdString(pair.first)] = function_name; // state to action map
+
+            QString action_code = replace_variables_with_get(QString::fromStdString(pair.second), automaton.getVariables());
+
+            functions[function_name] = action_code;   // function to function body map
+            state_action[QString::fromStdString(pair.first)] = function_name; // state to action name map
         }
     }
 
     for (const auto& transition : automaton.getTransitions()) {
         if (!transition.condition.empty()) {
             QString function_name = "condition_" + sanitize_python_identifier(transition.condition);
-            functions[function_name] = QString::fromStdString(transition.condition);
+            QString condition_code = replace_variables_with_get(QString::fromStdString(transition.condition), automaton.getVariables());
+
+            functions[function_name] = condition_code;
         }
     }
 
@@ -253,7 +271,7 @@ void InterpretGenerator::generate(const Automaton& automaton, const QString& out
     outfile << "    # 7. Connect to client and Run the FSM\n";
     outfile << "    client_host = 'localhost'\n";
     outfile << "    client_port = 65432 # Default port, change if needed\n\n";
-    outfile << "    print(f\"Starting FSM '{automaton.name}'...\")\n";
+    outfile << "    print(f\"Starting FSM '" << fsm_name << "'...\")\n";
     outfile << "    " << fsm_name << ".connect_to_client(host=client_host, port=client_port)\n\n";
     outfile << "    if " << fsm_name << "._client_socket: # Check if connection was successful\n";
     outfile << "        try:\n";

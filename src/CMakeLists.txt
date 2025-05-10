@@ -15,14 +15,14 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 add_subdirectory(${CMAKE_SOURCE_DIR}/nodeeditor-master nodeeditor_build)
 
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
-        interpret_generator.cpp
-        interpret_generator.h
-        spec_parser/automaton-data.cpp
-        spec_parser/automaton-data.hpp
+    main.cpp
+    mainwindow.cpp
+    mainwindow.h
+    mainwindow.ui
+    interpret_generator.cpp
+    interpret_generator.h
+    spec_parser/automaton-data.cpp
+    spec_parser/automaton-data.hpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -35,6 +35,14 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         controller.h controller.cpp
         interpret_generator.h interpret_generator.cpp
 
+    )
+
+    # Copy the fsm_core directory to the build directory
+    add_custom_command(
+        TARGET icp POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/interpret/fsm_core
+                $<TARGET_FILE_DIR:icp>/interpret/fsm_core
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET icp APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

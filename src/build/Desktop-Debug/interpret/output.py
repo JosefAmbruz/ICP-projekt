@@ -20,19 +20,19 @@ def condition_always_true(variables):
 
 
 def condition_x_eq_0(variables):
-    x == 0
+    variables.get('x') == 0
 
 
 def condition_x_gt_0(variables):
-    x > 0
+    variables.get('x') > 0
 
 
 def condition_x_lt_0(variables):
-    x < 0
+    variables.get('x') < 0
 
 
 def condition_y_lt_5(variables):
-    y < 5
+    variables.get('y') < 5
 
 
 def tralalerotralala(variables):
@@ -107,7 +107,7 @@ if __name__ == "__main__":
     client_host = 'localhost'
     client_port = 65432 # Default port, change if needed
 
-    print(f"Starting FSM '{automaton.name}'...")
+    print(f"Starting FSM 'MyAutomaton'...")
     MyAutomaton.connect_to_client(host=client_host, port=client_port)
 
     if MyAutomaton._client_socket: # Check if connection was successful
