@@ -7,11 +7,6 @@ import logging
 
 # --- Define FSM Actions and Conditions ---
 
-def action_State1(variables):
-    print('In State 1')
-    print('testing new line')
-
-
 def action_State2(variables):
     print('In State 2')
 
@@ -40,6 +35,12 @@ def condition_y_lt_5(variables):
     y < 5
 
 
+def tralalerotralala(variables):
+    #name=tralalerotralala
+    print('In State 1')
+    print('testing new line')
+
+
 # --- Main FSM Execution ---
 if __name__ == "__main__":
     # 1. Create the FSM instance
@@ -60,7 +61,7 @@ if __name__ == "__main__":
     )
     state_State1 = State(
         name="State1",
-        action=action_State1,
+        action=tralalerotralala,
         is_start_state=True,
         is_finish_state=False
     )

@@ -219,7 +219,7 @@ void MainWindow::on_button_Run_clicked()
     automaton.addVariable("x", "0");
     automaton.addVariable("y", "0");
 
-    automaton.addState("State1", "print('In State 1')\nprint('testing new line')");
+    automaton.addState("State1", "#name=tralalerotralala\nprint('In State 1')\nprint('testing new line')");
     automaton.addState("State2", "print('In State 2')");
     automaton.addState("State3", "print('In State 3')");
 
