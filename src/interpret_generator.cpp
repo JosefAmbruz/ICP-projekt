@@ -123,18 +123,20 @@ void InterpretGenerator::generate(const Automaton& automaton, const QString& out
     QTextStream outfile(&file);
 
     // --- Collect all function names ---
-    std::set<QString> function_names; // function names are sorted and unique
-    function_names.insert("always_true_condition"); // default condition
+    std::map<QString, QString> functions;
+    functions["condition_always_true"] = "return True"; // default condition with no action
 
     for (const auto& pair : automaton.getStates()) {
         if (!pair.second.empty()) { // action
-            function_names.insert(sanitize_python_identifier(pair.second));
+            QString function_name = "action_" + sanitize_python_identifier(pair.first);
+            functions[function_name] = QString::fromStdString(pair.second);
         }
     }
 
     for (const auto& transition : automaton.getTransitions()) {
         if (!transition.condition.empty()) {
-            function_names.insert(sanitize_python_identifier(transition.condition));
+            QString function_name = "condition_" + sanitize_python_identifier(transition.condition);
+            functions[function_name] = QString::fromStdString(transition.condition);
         }
     }
 
@@ -151,9 +153,11 @@ void InterpretGenerator::generate(const Automaton& automaton, const QString& out
 
     outfile << "# --- Define FSM Actions and Conditions ---\n\n";
 
-    for (const auto& func_name : function_names) {
-        outfile << "def " << func_name << "(variables):\n";
-        outfile << "    pass\n";
+    for (const auto& func : functions) {
+        outfile << "def " << func.first << "(variables):\n";
+        for (const auto& line : func.second.split('\n')) {
+            outfile << "    " << line << "\n";
+        }
         outfile << "\n\n";
     }
 

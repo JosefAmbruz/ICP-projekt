@@ -7,36 +7,37 @@ import logging
 
 # --- Define FSM Actions and Conditions ---
 
-def always_true_condition(variables):
-    pass
+def action_State1(variables):
+    print('In State 1')
+    print('testing new line')
 
 
-def printIn_State_1(variables):
-    pass
+def action_State2(variables):
+    print('In State 2')
 
 
-def printIn_State_2(variables):
-    pass
+def action_State3(variables):
+    print('In State 3')
 
 
-def printIn_State_3(variables):
-    pass
+def condition_always_true(variables):
+    return True
 
 
-def x_eq_0(variables):
-    pass
+def condition_x_eq_0(variables):
+    x == 0
 
 
-def x_gt_0(variables):
-    pass
+def condition_x_gt_0(variables):
+    x > 0
 
 
-def x_lt_0(variables):
-    pass
+def condition_x_lt_0(variables):
+    x < 0
 
 
-def y_lt_5(variables):
-    pass
+def condition_y_lt_5(variables):
+    y < 5
 
 
 # --- Main FSM Execution ---
@@ -47,19 +48,19 @@ if __name__ == "__main__":
     # 2. Define States
     state_State3 = State(
         name="State3",
-        action=Q1,
+        action=W1printtesting_new_line,
         is_start_state=False,
         is_finish_state=True
     )
     state_State2 = State(
         name="State2",
-        action=MQY2,
+        action=W2,
         is_start_state=False,
         is_finish_state=False
     )
     state_State1 = State(
         name="State1",
-        action=Y3,
+        action=Wl9zz3,
         is_start_state=True,
         is_finish_state=False
     )
