@@ -231,9 +231,46 @@ void MainWindow::onConnectionClicked(ConnectionId const connId)
  *  ========================================================================
  */
 
+inline std::string trimToStdString(const QString& str) {
+    return str.trimmed().toStdString();
+}
+
+std::vector<std::pair<std::string, std::string>> parseVariableTextBox(const QString& input) {
+    std::vector<std::pair<std::string, std::string>> result;
+    QTextStream stream(const_cast<QString*>(&input));  // QTextStream needs non-const QString
+
+    while (!stream.atEnd()) {
+        QString line = stream.readLine().trimmed();
+        if (line.isEmpty() || !line.contains("="))
+            continue;
+
+        QStringList parts = line.split("=", Qt::KeepEmptyParts);
+        if (parts.size() != 2)
+            continue;  // skip malformed lines
+
+        std::string varName = trimToStdString(parts[0]);
+        std::string value = trimToStdString(parts[1]);
+
+        result.emplace_back(varName, value);
+    }
+
+    return result;
+}
+
 void MainWindow::on_button_Run_clicked()
 {
     Automaton* automaton = graphModel->ToAutomaton();
+
+    // get the texbox conents
+    auto variablesTextEdit = ui->textEdit_vars->toPlainText();
+    // parse the variable definition textbox contents
+    auto variables = parseVariableTextBox(variablesTextEdit);
+
+    // add the parsed varaible names and their values to the automaton:
+    for (const auto& [varName, value] : variables)
+    {
+        automaton->addVariable(varName, value);
+    }
 
     InterpretGenerator generator;
     QString file_path = QDir::currentPath() + "/interpret/output.py";
