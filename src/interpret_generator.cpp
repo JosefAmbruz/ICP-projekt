@@ -124,12 +124,14 @@ void InterpretGenerator::generate(const Automaton& automaton, const QString& out
 
     // --- Collect all function names ---
     std::map<QString, QString> functions;
+    std::map<QString, QString> state_action;
     functions["condition_always_true"] = "return True"; // default condition with no action
 
     for (const auto& pair : automaton.getStates()) {
         if (!pair.second.empty()) { // action
             QString function_name = "action_" + sanitize_python_identifier(pair.first);
-            functions[function_name] = QString::fromStdString(pair.second);
+            functions[function_name] = QString::fromStdString(pair.second);   // function to function body map
+            state_action[QString::fromStdString(pair.first)] = function_name; // state to action map
         }
     }
 
@@ -176,12 +178,8 @@ void InterpretGenerator::generate(const Automaton& automaton, const QString& out
         outfile << "    state_" << state_name << " = State(\n";
         outfile << "        name=" << to_python_string_literal(state.first) << ",\n";
 
-        QString action_func = "None";
-        auto it_state_action = automaton.getStates().find(state.first);
-        if (it_state_action != automaton.getStates().end() && !it_state_action->second.empty()) {
-            action_func = sanitize_python_identifier(it_state_action->second);
-        }
-        outfile << "        action=" << action_func << ",\n";
+
+        outfile << "        action=" << state_action[state_name] << ",\n";
         outfile << "        is_start_state=" << (state.first == automaton.getStartName() ? "True" : "False") << ",\n";
         outfile << "        is_finish_state=" << (automaton.isFinalState(state.first) ? "True" : "False") << "\n";
         outfile << "    )\n";
@@ -191,14 +189,60 @@ void InterpretGenerator::generate(const Automaton& automaton, const QString& out
 
     outfile << "    # 3. Define Transitions\n";
 
+    int tr_counter = 0;
+    for (const auto& t : automaton.getTransitions()) {
+        QString py_from_state = sanitize_python_identifier(t.fromState);
+        QString py_to_state = sanitize_python_identifier(t.toState);
+        QString tr_var_name = "tr_" + py_from_state + "_to_" + py_to_state + "_" + QString::number(tr_counter++);
+
+        outfile << "    " << tr_var_name << " = Transition(\n";
+        outfile << "        target_state_name=" << to_python_string_literal(t.toState) << ",\n";
+
+        QString cond_func = "condition_always_true"; // Default
+        if (!t.condition.empty()) {
+            cond_func = "condition_" + sanitize_python_identifier(t.condition); // this is error prone but whatever
+        }
+        outfile << "        condition=" << cond_func << ",\n";
+
+        outfile << "        delay=" << t.delay << ".0\n"; // Ensure it's a float
+        outfile << "    )\n";
+    }
+    outfile << "\n";
+
 
     outfile << "    # 4. Add Transitions to States\n";
+
+    tr_counter = 0; // Reset for matching variable names
+    for (const auto& t : automaton.getTransitions()) {
+        QString py_from_state_var = "state_" + sanitize_python_identifier(t.fromState);
+        QString py_from_state_name_sanitized = sanitize_python_identifier(t.fromState);
+        QString py_to_state_name_sanitized = sanitize_python_identifier(t.toState);
+        QString tr_var_name = "tr_" + py_from_state_name_sanitized + "_to_" + py_to_state_name_sanitized + "_" + QString::number(tr_counter++);
+        outfile << "    " << py_from_state_var << ".add_transition(" << tr_var_name << ")\n";
+    }
+    outfile << "\n";
 
 
     outfile << "    # 5. Add States to FSM\n";
 
+    for (const auto& state : states) {
+        QString state_name = sanitize_python_identifier(state.first);
+        QString py_state_var = "state_" + state_name;
+        outfile << "    " << fsm_name << ".add_state(" << py_state_var << ")\n";
+    }
+    outfile << "\n";
+
 
     outfile << "    # 6. Set Initial Variables\n";
+    if (automaton.getVariables().empty()) {
+        outfile << "    # No initial variables defined in specification.\n";
+    }
+    for (const auto& var_pair : automaton.getVariables()) {
+        outfile << "    " << fsm_name << ".set_variable("
+                << to_python_string_literal(var_pair.first) << ", "
+                << to_python_value_literal(var_pair.second) << ")\n";
+    }
+    outfile << "\n";
 
     outfile << "    # 7. Connect to client and Run the FSM\n";
     outfile << "    client_host = 'localhost'\n";
