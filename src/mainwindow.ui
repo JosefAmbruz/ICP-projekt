@@ -183,10 +183,16 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <item>
          <widget class="QPushButton" name="button_addState">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
           </property>
           <property name="text">
            <string>➕ State</string>
@@ -197,14 +203,28 @@ li.checked::marker { content: &quot;\2612&quot;; }
          </widget>
         </item>
         <item>
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>FSM Name:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lineEdit_fsmName">
+          <property name="text">
+           <string>my_fsm</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="horizontalSpacer">
           <property name="orientation">
-           <enum>Qt::Vertical</enum>
+           <enum>Qt::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>44</width>
-            <height>22</height>
+            <width>40</width>
+            <height>20</height>
            </size>
           </property>
          </spacer>
@@ -216,6 +236,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
           </property>
           <property name="text">
            <string>🟢 Run </string>
@@ -229,6 +255,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
           </property>
           <property name="text">
            <string>⛔ Stop </string>

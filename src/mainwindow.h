@@ -24,6 +24,7 @@ public slots:
     void onNodeClicked(NodeId const nodeId);
     void onNodeSelectionChanged();
     void onConnectionClicked(ConnectionId connId);
+    void onSaveToFileClicked();
 private slots:
     void on_button_addState_clicked();
 
@@ -38,6 +39,8 @@ private slots:
     void on_checkBox_isFinal_stateChanged(int arg1);
 
     void on_pushButton_setStartState_clicked();
+
+    void on_lineEdit_fsmName_textChanged(const QString &arg1);
 
 private:
     Ui::MainWindow *ui;
