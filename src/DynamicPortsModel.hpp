@@ -1,5 +1,6 @@
 #pragma once
 
+#include "spec_parser/automaton-data.hpp"
 #include <QtCore/QJsonObject>
 #include <QtCore/QPointF>
 #include <QtCore/QSize>
@@ -56,13 +57,21 @@ public:
         setNodeData(nodeId, QtNodes::NodeRole::Caption, QVariant::fromValue(name));
     }
 
-    void SetNodeActionCode(NodeId const nodeId, std::string code) { _nodeActionCodes[nodeId] = code; }
-    std::string GetNodeActionCode(NodeId const nodeId) { return _nodeActionCodes[nodeId]; }
+    void SetNodeActionCode(NodeId const nodeId, QString code) { _nodeActionCodes[nodeId] = code; }
+    QString GetNodeActionCode(NodeId const nodeId) { return _nodeActionCodes[nodeId]; }
 
     void SetConnectionCode(ConnectionId const connId, QString code){ _connectionCodes[connId] = code; }
     QString GetConnectionCode(ConnectionId const connId) { return _connectionCodes[connId]; }
 
+    void SetNodeFinalState(NodeId const nodeId, bool value){ _nodeFinalStates[nodeId] = value; }
+    bool GetNodeFinalState(NodeId const nodeId) { return _nodeFinalStates[nodeId]; }
+
+    void SetStartNode(NodeId const nodeId) { _startStateId = nodeId; }
+    bool IsStartNode(NodeId const nodeId) { return nodeId == _startStateId; }
+
     bool connectionExists(ConnectionId const connectionId) const override;
+
+    Automaton* ToAutomaton() const;
 
     NodeId addNode(QString const nodeType = QString()) override;
 
@@ -117,8 +126,10 @@ public:
 private:
     std::unordered_set<NodeId> _nodeIds;
     std::unordered_map<NodeId, QString> _nodeNames;
-    std::unordered_map<NodeId, std::string> _nodeActionCodes;
+    std::unordered_map<NodeId, QString> _nodeActionCodes;
     std::unordered_map<ConnectionId, QString> _connectionCodes;
+    std::unordered_map<NodeId, bool> _nodeFinalStates;
+    NodeId _startStateId = 0;
 
     std::unordered_set<ConnectionId> _connectivity;
 

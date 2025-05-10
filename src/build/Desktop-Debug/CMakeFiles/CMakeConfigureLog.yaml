@@ -39,8 +39,13 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
+<<<<<<< HEAD
       source: "/home/josef/Documents/FITVUT/2BIT-letn\u00ed/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/CMakeFiles/CMakeScratch/TryCompile-6tDcjW"
       binary: "/home/josef/Documents/FITVUT/2BIT-letn\u00ed/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/CMakeFiles/CMakeScratch/TryCompile-6tDcjW"
+=======
+      source: "/home/josef/Documents/FITVUT/2BIT-letn\u00ed/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/CMakeFiles/CMakeScratch/TryCompile-hZFBFT"
+      binary: "/home/josef/Documents/FITVUT/2BIT-letn\u00ed/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/CMakeFiles/CMakeScratch/TryCompile-hZFBFT"
+>>>>>>> feature/qt-ui
     cmakeVariables:
       CMAKE_CXX_FLAGS: "-DQT_QML_DEBUG"
       CMAKE_CXX_SCAN_FOR_MODULES: "OFF"
@@ -49,10 +54,17 @@ events:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: true
       stdout: |
+<<<<<<< HEAD
         Change Dir: '/home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/CMakeFiles/CMakeScratch/TryCompile-6tDcjW'
         
         Run Build Command(s): /usr/bin/ninja -v cmTC_38862
         [1/2] /usr/bin/g++   -DQT_QML_DEBUG    -v -o CMakeFiles/cmTC_38862.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp
+=======
+        Change Dir: '/home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/CMakeFiles/CMakeScratch/TryCompile-hZFBFT'
+        
+        Run Build Command(s): /usr/bin/ninja -v cmTC_aae64
+        [1/2] /usr/bin/g++   -DQT_QML_DEBUG    -v -o CMakeFiles/cmTC_aae64.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp
+>>>>>>> feature/qt-ui
         Using built-in specs.
         COLLECT_GCC=/usr/bin/g++
         Target: x86_64-pc-linux-gnu
@@ -60,8 +72,13 @@ events:
         Thread model: posix
         Supported LTO compression algorithms: zlib zstd
         gcc version 15.1.1 20250425 (GCC) 
+<<<<<<< HEAD
         COLLECT_GCC_OPTIONS='-D' 'QT_QML_DEBUG' '-v' '-o' 'CMakeFiles/cmTC_38862.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_38862.dir/'
          /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/cc1plus -quiet -v -D_GNU_SOURCE -D QT_QML_DEBUG /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_38862.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -o /tmp/cctSCuMW.s
+=======
+        COLLECT_GCC_OPTIONS='-D' 'QT_QML_DEBUG' '-v' '-o' 'CMakeFiles/cmTC_aae64.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_aae64.dir/'
+         /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/cc1plus -quiet -v -D_GNU_SOURCE -D QT_QML_DEBUG /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_aae64.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -o /tmp/ccNk89Y6.s
+>>>>>>> feature/qt-ui
         GNU C++17 (GCC) version 15.1.1 20250425 (x86_64-pc-linux-gnu)
         	compiled by GNU C version 15.1.1 20250425, GMP version 6.3.0, MPFR version 4.2.2, MPC version 1.3.1, isl version isl-0.27-GMP
         
@@ -78,6 +95,7 @@ events:
          /usr/include
         End of search list.
         Compiler executable checksum: ce3489707740d94cce8827fad3390bdb
+<<<<<<< HEAD
         COLLECT_GCC_OPTIONS='-D' 'QT_QML_DEBUG' '-v' '-o' 'CMakeFiles/cmTC_38862.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_38862.dir/'
          as -v --64 -o CMakeFiles/cmTC_38862.dir/CMakeCXXCompilerABI.cpp.o /tmp/cctSCuMW.s
         GNU assembler version 2.44.0 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.44.0
@@ -85,6 +103,15 @@ events:
         LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../:/lib/:/usr/lib/
         COLLECT_GCC_OPTIONS='-D' 'QT_QML_DEBUG' '-v' '-o' 'CMakeFiles/cmTC_38862.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_38862.dir/CMakeCXXCompilerABI.cpp.'
         [2/2] : && /usr/bin/g++ -DQT_QML_DEBUG -v -Wl,-v CMakeFiles/cmTC_38862.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_38862   && :
+=======
+        COLLECT_GCC_OPTIONS='-D' 'QT_QML_DEBUG' '-v' '-o' 'CMakeFiles/cmTC_aae64.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_aae64.dir/'
+         as -v --64 -o CMakeFiles/cmTC_aae64.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccNk89Y6.s
+        GNU assembler version 2.44.0 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.44.0
+        COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/
+        LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../:/lib/:/usr/lib/
+        COLLECT_GCC_OPTIONS='-D' 'QT_QML_DEBUG' '-v' '-o' 'CMakeFiles/cmTC_aae64.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_aae64.dir/CMakeCXXCompilerABI.cpp.'
+        [2/2] : && /usr/bin/g++ -DQT_QML_DEBUG -v -Wl,-v CMakeFiles/cmTC_aae64.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_aae64   && :
+>>>>>>> feature/qt-ui
         Using built-in specs.
         COLLECT_GCC=/usr/bin/g++
         COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/lto-wrapper
@@ -95,12 +122,21 @@ events:
         gcc version 15.1.1 20250425 (GCC) 
         COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../:/lib/:/usr/lib/
+<<<<<<< HEAD
         COLLECT_GCC_OPTIONS='-D' 'QT_QML_DEBUG' '-v' '-o' 'cmTC_38862' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_38862.'
          /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccsuEjwI.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_38862 /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_38862.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/crtn.o
         collect2 version 15.1.1 20250425
         /usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccsuEjwI.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_38862 /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_38862.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/crtn.o
         GNU ld (GNU Binutils) 2.44.0
         COLLECT_GCC_OPTIONS='-D' 'QT_QML_DEBUG' '-v' '-o' 'cmTC_38862' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_38862.'
+=======
+        COLLECT_GCC_OPTIONS='-D' 'QT_QML_DEBUG' '-v' '-o' 'cmTC_aae64' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_aae64.'
+         /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccg0rPYJ.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_aae64 /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_aae64.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/crtn.o
+        collect2 version 15.1.1 20250425
+        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccg0rPYJ.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_aae64 /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_aae64.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/crtn.o
+        GNU ld (GNU Binutils) 2.44.0
+        COLLECT_GCC_OPTIONS='-D' 'QT_QML_DEBUG' '-v' '-o' 'cmTC_aae64' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_aae64.'
+>>>>>>> feature/qt-ui
         
       exitCode: 0
   -
@@ -141,10 +177,17 @@ events:
       Parsed CXX implicit link information:
         link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
         linker tool regex: [^[ 	]*(->|")?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)))("|,| |$)]
+<<<<<<< HEAD
         ignore line: [Change Dir: '/home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/CMakeFiles/CMakeScratch/TryCompile-6tDcjW']
         ignore line: []
         ignore line: [Run Build Command(s): /usr/bin/ninja -v cmTC_38862]
         ignore line: [[1/2] /usr/bin/g++   -DQT_QML_DEBUG    -v -o CMakeFiles/cmTC_38862.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
+=======
+        ignore line: [Change Dir: '/home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/CMakeFiles/CMakeScratch/TryCompile-hZFBFT']
+        ignore line: []
+        ignore line: [Run Build Command(s): /usr/bin/ninja -v cmTC_aae64]
+        ignore line: [[1/2] /usr/bin/g++   -DQT_QML_DEBUG    -v -o CMakeFiles/cmTC_aae64.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
+>>>>>>> feature/qt-ui
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/g++]
         ignore line: [Target: x86_64-pc-linux-gnu]
@@ -152,8 +195,13 @@ events:
         ignore line: [Thread model: posix]
         ignore line: [Supported LTO compression algorithms: zlib zstd]
         ignore line: [gcc version 15.1.1 20250425 (GCC) ]
+<<<<<<< HEAD
         ignore line: [COLLECT_GCC_OPTIONS='-D' 'QT_QML_DEBUG' '-v' '-o' 'CMakeFiles/cmTC_38862.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_38862.dir/']
         ignore line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/cc1plus -quiet -v -D_GNU_SOURCE -D QT_QML_DEBUG /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_38862.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -o /tmp/cctSCuMW.s]
+=======
+        ignore line: [COLLECT_GCC_OPTIONS='-D' 'QT_QML_DEBUG' '-v' '-o' 'CMakeFiles/cmTC_aae64.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_aae64.dir/']
+        ignore line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/cc1plus -quiet -v -D_GNU_SOURCE -D QT_QML_DEBUG /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_aae64.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -o /tmp/ccNk89Y6.s]
+>>>>>>> feature/qt-ui
         ignore line: [GNU C++17 (GCC) version 15.1.1 20250425 (x86_64-pc-linux-gnu)]
         ignore line: [	compiled by GNU C version 15.1.1 20250425  GMP version 6.3.0  MPFR version 4.2.2  MPC version 1.3.1  isl version isl-0.27-GMP]
         ignore line: []
@@ -170,6 +218,7 @@ events:
         ignore line: [ /usr/include]
         ignore line: [End of search list.]
         ignore line: [Compiler executable checksum: ce3489707740d94cce8827fad3390bdb]
+<<<<<<< HEAD
         ignore line: [COLLECT_GCC_OPTIONS='-D' 'QT_QML_DEBUG' '-v' '-o' 'CMakeFiles/cmTC_38862.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_38862.dir/']
         ignore line: [ as -v --64 -o CMakeFiles/cmTC_38862.dir/CMakeCXXCompilerABI.cpp.o /tmp/cctSCuMW.s]
         ignore line: [GNU assembler version 2.44.0 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.44.0]
@@ -177,6 +226,15 @@ events:
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../:/lib/:/usr/lib/]
         ignore line: [COLLECT_GCC_OPTIONS='-D' 'QT_QML_DEBUG' '-v' '-o' 'CMakeFiles/cmTC_38862.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_38862.dir/CMakeCXXCompilerABI.cpp.']
         ignore line: [[2/2] : && /usr/bin/g++ -DQT_QML_DEBUG -v -Wl -v CMakeFiles/cmTC_38862.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_38862   && :]
+=======
+        ignore line: [COLLECT_GCC_OPTIONS='-D' 'QT_QML_DEBUG' '-v' '-o' 'CMakeFiles/cmTC_aae64.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_aae64.dir/']
+        ignore line: [ as -v --64 -o CMakeFiles/cmTC_aae64.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccNk89Y6.s]
+        ignore line: [GNU assembler version 2.44.0 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.44.0]
+        ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/]
+        ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../:/lib/:/usr/lib/]
+        ignore line: [COLLECT_GCC_OPTIONS='-D' 'QT_QML_DEBUG' '-v' '-o' 'CMakeFiles/cmTC_aae64.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_aae64.dir/CMakeCXXCompilerABI.cpp.']
+        ignore line: [[2/2] : && /usr/bin/g++ -DQT_QML_DEBUG -v -Wl -v CMakeFiles/cmTC_aae64.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_aae64   && :]
+>>>>>>> feature/qt-ui
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/g++]
         ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/lto-wrapper]
@@ -187,13 +245,22 @@ events:
         ignore line: [gcc version 15.1.1 20250425 (GCC) ]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../:/lib/:/usr/lib/]
+<<<<<<< HEAD
         ignore line: [COLLECT_GCC_OPTIONS='-D' 'QT_QML_DEBUG' '-v' '-o' 'cmTC_38862' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_38862.']
         link line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccsuEjwI.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_38862 /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_38862.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/crtn.o]
+=======
+        ignore line: [COLLECT_GCC_OPTIONS='-D' 'QT_QML_DEBUG' '-v' '-o' 'cmTC_aae64' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_aae64.']
+        link line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccg0rPYJ.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_aae64 /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_aae64.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/crtn.o]
+>>>>>>> feature/qt-ui
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/collect2] ==> ignore
           arg [-plugin] ==> ignore
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/liblto_plugin.so] ==> ignore
           arg [-plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/lto-wrapper] ==> ignore
+<<<<<<< HEAD
           arg [-plugin-opt=-fresolution=/tmp/ccsuEjwI.res] ==> ignore
+=======
+          arg [-plugin-opt=-fresolution=/tmp/ccg0rPYJ.res] ==> ignore
+>>>>>>> feature/qt-ui
           arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
           arg [-plugin-opt=-pass-through=-lc] ==> ignore
@@ -208,7 +275,11 @@ events:
           arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
           arg [-pie] ==> ignore
           arg [-o] ==> ignore
+<<<<<<< HEAD
           arg [cmTC_38862] ==> ignore
+=======
+          arg [cmTC_aae64] ==> ignore
+>>>>>>> feature/qt-ui
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/Scrt1.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/Scrt1.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/crti.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/crti.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/crtbeginS.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/crtbeginS.o]
@@ -220,7 +291,11 @@ events:
           arg [-L/lib] ==> dir [/lib]
           arg [-L/usr/lib] ==> dir [/usr/lib]
           arg [-v] ==> ignore
+<<<<<<< HEAD
           arg [CMakeFiles/cmTC_38862.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+=======
+          arg [CMakeFiles/cmTC_aae64.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+>>>>>>> feature/qt-ui
           arg [-lstdc++] ==> lib [stdc++]
           arg [-lm] ==> lib [m]
           arg [-lgcc_s] ==> lib [gcc_s]
@@ -231,7 +306,11 @@ events:
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/crtendS.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/crtendS.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/crtn.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/crtn.o]
         ignore line: [collect2 version 15.1.1 20250425]
+<<<<<<< HEAD
         ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccsuEjwI.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_38862 /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_38862.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/crtn.o]
+=======
+        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccg0rPYJ.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_aae64 /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1 -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_aae64.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/crtn.o]
+>>>>>>> feature/qt-ui
         linker tool for 'CXX': /usr/bin/ld
         collapse obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/Scrt1.o] ==> [/usr/lib/Scrt1.o]
         collapse obj [/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/crti.o] ==> [/usr/lib/crti.o]
@@ -274,8 +353,13 @@ events:
     checks:
       - "Performing Test CMAKE_HAVE_LIBC_PTHREAD"
     directories:
+<<<<<<< HEAD
       source: "/home/josef/Documents/FITVUT/2BIT-letn\u00ed/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/CMakeFiles/CMakeScratch/TryCompile-fvogWD"
       binary: "/home/josef/Documents/FITVUT/2BIT-letn\u00ed/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/CMakeFiles/CMakeScratch/TryCompile-fvogWD"
+=======
+      source: "/home/josef/Documents/FITVUT/2BIT-letn\u00ed/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/CMakeFiles/CMakeScratch/TryCompile-iTopKE"
+      binary: "/home/josef/Documents/FITVUT/2BIT-letn\u00ed/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/CMakeFiles/CMakeScratch/TryCompile-iTopKE"
+>>>>>>> feature/qt-ui
     cmakeVariables:
       CMAKE_CXX_FLAGS: "-DQT_QML_DEBUG"
       CMAKE_CXX_FLAGS_DEBUG: "-g"
@@ -285,11 +369,19 @@ events:
       variable: "CMAKE_HAVE_LIBC_PTHREAD"
       cached: true
       stdout: |
+<<<<<<< HEAD
         Change Dir: '/home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/CMakeFiles/CMakeScratch/TryCompile-fvogWD'
         
         Run Build Command(s): /usr/bin/ninja -v cmTC_c3f6c
         [1/2] /usr/bin/g++ -DCMAKE_HAVE_LIBC_PTHREAD  -DQT_QML_DEBUG  -std=gnu++17 -o CMakeFiles/cmTC_c3f6c.dir/src.cxx.o -c '/home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/CMakeFiles/CMakeScratch/TryCompile-fvogWD/src.cxx'
         [2/2] : && /usr/bin/g++ -DQT_QML_DEBUG  CMakeFiles/cmTC_c3f6c.dir/src.cxx.o -o cmTC_c3f6c   && :
+=======
+        Change Dir: '/home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/CMakeFiles/CMakeScratch/TryCompile-iTopKE'
+        
+        Run Build Command(s): /usr/bin/ninja -v cmTC_61b41
+        [1/2] /usr/bin/g++ -DCMAKE_HAVE_LIBC_PTHREAD  -DQT_QML_DEBUG  -std=gnu++17 -o CMakeFiles/cmTC_61b41.dir/src.cxx.o -c '/home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/CMakeFiles/CMakeScratch/TryCompile-iTopKE/src.cxx'
+        [2/2] : && /usr/bin/g++ -DQT_QML_DEBUG  CMakeFiles/cmTC_61b41.dir/src.cxx.o -o cmTC_61b41   && :
+>>>>>>> feature/qt-ui
         
       exitCode: 0
   -
@@ -307,8 +399,13 @@ events:
     checks:
       - "Performing Test HAVE_STDATOMIC"
     directories:
+<<<<<<< HEAD
       source: "/home/josef/Documents/FITVUT/2BIT-letn\u00ed/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/CMakeFiles/CMakeScratch/TryCompile-sCalta"
       binary: "/home/josef/Documents/FITVUT/2BIT-letn\u00ed/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/CMakeFiles/CMakeScratch/TryCompile-sCalta"
+=======
+      source: "/home/josef/Documents/FITVUT/2BIT-letn\u00ed/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/CMakeFiles/CMakeScratch/TryCompile-oIAfTA"
+      binary: "/home/josef/Documents/FITVUT/2BIT-letn\u00ed/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/CMakeFiles/CMakeScratch/TryCompile-oIAfTA"
+>>>>>>> feature/qt-ui
     cmakeVariables:
       CMAKE_CXX_FLAGS: "-DQT_QML_DEBUG"
       CMAKE_CXX_FLAGS_DEBUG: "-g"
@@ -318,11 +415,19 @@ events:
       variable: "HAVE_STDATOMIC"
       cached: true
       stdout: |
+<<<<<<< HEAD
         Change Dir: '/home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/CMakeFiles/CMakeScratch/TryCompile-sCalta'
         
         Run Build Command(s): /usr/bin/ninja -v cmTC_8b166
         [1/2] /usr/bin/g++ -DHAVE_STDATOMIC  -DQT_QML_DEBUG  -std=gnu++17 -o CMakeFiles/cmTC_8b166.dir/src.cxx.o -c '/home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/CMakeFiles/CMakeScratch/TryCompile-sCalta/src.cxx'
         [2/2] : && /usr/bin/g++ -DQT_QML_DEBUG  CMakeFiles/cmTC_8b166.dir/src.cxx.o -o cmTC_8b166   && :
+=======
+        Change Dir: '/home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/CMakeFiles/CMakeScratch/TryCompile-oIAfTA'
+        
+        Run Build Command(s): /usr/bin/ninja -v cmTC_81108
+        [1/2] /usr/bin/g++ -DHAVE_STDATOMIC  -DQT_QML_DEBUG  -std=gnu++17 -o CMakeFiles/cmTC_81108.dir/src.cxx.o -c '/home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/CMakeFiles/CMakeScratch/TryCompile-oIAfTA/src.cxx'
+        [2/2] : && /usr/bin/g++ -DQT_QML_DEBUG  CMakeFiles/cmTC_81108.dir/src.cxx.o -o cmTC_81108   && :
+>>>>>>> feature/qt-ui
         
       exitCode: 0
 ...

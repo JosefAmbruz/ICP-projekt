@@ -35,6 +35,10 @@ private slots:
 
     void on_textEdit_connCond_textChanged();
 
+    void on_checkBox_isFinal_stateChanged(int arg1);
+
+    void on_pushButton_setStartState_clicked();
+
 private:
     Ui::MainWindow *ui;
     void initNodeCanvas();

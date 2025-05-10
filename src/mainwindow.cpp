@@ -162,24 +162,45 @@ void MainWindow::onNodeClicked(NodeId const nodeId)
     ui->textEdit_actionCode->setEnabled(true);
     ui->lineEdit_stateName->setEnabled(true);
     ui->textEdit_connCond->setEnabled(false);
+    // enable the button for setting start state
+    ui->pushButton_setStartState->setEnabled(true);
+    // enable checkbox fgor setting final state
+    ui->checkBox_isFinal->setEnabled(true);
+
 
     // Set the textbox text to the code of clicked node
     auto nodeText = graphModel->GetNodeActionCode(nodeId);
-    ui->textEdit_actionCode->setText(QString::fromStdString(nodeText));
+    ui->textEdit_actionCode->setText(nodeText);
     auto nodeName = graphModel->GetNodeName(nodeId);
     ui->lineEdit_stateName->setText(nodeName);
+    auto checkboxState = graphModel->GetNodeFinalState(nodeId) ? Qt::CheckState::Checked : Qt::CheckState::Unchecked;
+    ui->checkBox_isFinal->setCheckState(checkboxState);
+
+    // disable the Start State button if this state is already set as start
+    if(graphModel->IsStartNode(nodeId))
+    {
+        ui->pushButton_setStartState->setEnabled(false);
+        ui->pushButton_setStartState->setText("✅Start State");
+    }
+    else // otherwise set the normal text
+    {
+        ui->pushButton_setStartState->setEnabled(true);
+        ui->pushButton_setStartState->setText("Set as Start State");
+    }
 }
 
 void MainWindow::onNodeSelectionChanged()
 {
     qWarning() << "Selection Changed!";
 
-    // if there is nothing selected, disable the code textEdit and state name lineEdit
+    // if there is nothing selected, disable the UI elems fro adjusting state settings
     if(nodeScene->selectedItems().empty())
     {
         ui->textEdit_actionCode->setEnabled(false);
         ui->lineEdit_stateName->setEnabled(false);
         ui->textEdit_connCond->setEnabled(false);
+        ui->pushButton_setStartState->setEnabled(false);
+        ui->checkBox_isFinal->setEnabled(false);
     }
 }
 
@@ -195,6 +216,9 @@ void MainWindow::onConnectionClicked(ConnectionId const connId)
     ui->textEdit_actionCode->setEnabled(false);
     // enable the textEdit for the connection condition code:
     ui->textEdit_connCond->setEnabled(true);
+    // disable the finalState checkbox and start stateb btn:
+    ui->checkBox_isFinal->setEnabled(false);
+    ui->pushButton_setStartState->setEnabled(false);
 
     // add the current connection code:
     auto connCode = graphModel->GetConnectionCode(connId);
@@ -209,34 +233,34 @@ void MainWindow::onConnectionClicked(ConnectionId const connId)
 
 void MainWindow::on_button_Run_clicked()
 {
-    Automaton automaton;
+    Automaton* automaton = graphModel->ToAutomaton();
 
     // --- test purposes only ---
     // demonstration of how the generator interacts with the generator
-    automaton.setName("MyAutomaton");
-    automaton.setDescription("This is a test automaton.");
+    // automaton.setName("MyAutomaton");
+    // automaton.setDescription("This is a test automaton.");
 
-    automaton.addVariable("x", "0");
-    automaton.addVariable("y", "0");
+    // automaton.addVariable("x", "0");
+    // automaton.addVariable("y", "0");
 
-    automaton.addState("State1", "#name=tralalerotralala\nprint('In State 1')\nprint('testing new line')");
-    automaton.addState("State2", "print('In State 2')");
-    automaton.addState("State3", "print('In State 3')");
+    // automaton.addState("State1", "#name=tralalerotralala\nprint('In State 1')\nprint('testing new line')");
+    // automaton.addState("State2", "print('In State 2')");
+    // automaton.addState("State3", "print('In State 3')");
 
-    automaton.setStartState("State1");
-    automaton.addFinalState("State3");
+    // automaton.setStartState("State1");
+    // automaton.addFinalState("State3");
 
-    automaton.addTransition({"State1", "State2", "x > 0", "", 0});
-    automaton.addTransition({"State2", "State3", "y < 5", "", 0});
-    automaton.addTransition({"State3", "State1", "x == 0", "", 0});
-    automaton.addTransition({"State1", "State3", "x < 0", "", 0});
+    // automaton.addTransition({"State1", "State2", "x > 0", "", 0});
+    // automaton.addTransition({"State2", "State3", "y < 5", "", 0});
+    // automaton.addTransition({"State3", "State1", "x == 0", "", 0});
+    // automaton.addTransition({"State1", "State3", "x < 0", "", 0});
     // --- end ---
 
     InterpretGenerator generator;
     QString file_path = QDir::currentPath() + "/interpret/output.py";
 
     qDebug() << "File path:" << file_path;
-    generator.generate(automaton, file_path);
+    generator.generate(*automaton, file_path);
 }
 
 void MainWindow::on_button_addState_clicked()
@@ -250,7 +274,7 @@ void MainWindow::on_button_addState_clicked()
 void MainWindow::on_textEdit_actionCode_textChanged()
 {
     // update the code of selected node:
-    auto textEditContent = ui->textEdit_actionCode->toPlainText().toStdString();
+    auto textEditContent = ui->textEdit_actionCode->toPlainText();
     graphModel->SetNodeActionCode(lastSelectedNode, textEditContent);
 }
 
@@ -266,5 +290,28 @@ void MainWindow::on_textEdit_connCond_textChanged()
 {
     auto connCode = ui->textEdit_connCond->toPlainText();
     graphModel->SetConnectionCode(lastSelectedConnId, connCode);
+}
+
+
+void MainWindow::on_checkBox_isFinal_stateChanged(int state)
+{
+    // state:
+    // 0 = not-checked
+    // 2 = checked
+    auto isChecked = (state == 2);
+    graphModel->SetNodeFinalState(lastSelectedNode, isChecked);
+}
+
+
+void MainWindow::on_pushButton_setStartState_clicked()
+{
+    graphModel->SetStartNode(lastSelectedNode);
+    // disable the Start State button if this state is already set as start
+    if(graphModel->IsStartNode(lastSelectedNode))
+    {
+        ui->pushButton_setStartState->setEnabled(false);
+        ui->pushButton_setStartState->setText("✅Start State");
+    }
+
 }
 

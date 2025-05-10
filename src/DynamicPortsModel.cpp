@@ -73,6 +73,9 @@ NodeId DynamicPortsModel::addNode(QString const nodeType)
     // Add a default code to the node:
     _nodeActionCodes[newId] = "# Enter code here:\n";
 
+    // Initaialzie it as non-fian lstate
+    _nodeFinalStates[newId] = false;
+
     Q_EMIT nodeCreated(newId);
 
     return newId;
@@ -283,7 +286,7 @@ bool DynamicPortsModel::deleteConnection(ConnectionId const connectionId)
 
 bool DynamicPortsModel::deleteNode(NodeId const nodeId)
 {
-
+    _nodeFinalStates.erase(nodeId);
     _nodeNames.erase(nodeId);
     _nodeActionCodes.erase(nodeId);
 
@@ -386,6 +389,58 @@ void DynamicPortsModel::load(QJsonObject const &jsonDocument)
         // Restore the connection
         addConnection(connId);
     }
+}
+
+Automaton* DynamicPortsModel::ToAutomaton() const
+{
+
+    if(_startStateId == 0)
+    {
+        qWarning() << "Start state not set!";
+        return nullptr;
+    }
+
+    Automaton* fsm = new Automaton();
+
+    for(const NodeId& id :_nodeIds)
+    {
+        // find the data for the current NodeId
+        auto nodeActionCode = _nodeActionCodes.find(id)->second;
+        auto nodeName = _nodeNames.find(id)->second;
+        auto isFinal = _nodeFinalStates.find(id)->second;
+
+        fsm->setName("Automaton"); // TODO
+        fsm->setDescription("Description"); // TODO
+        fsm->addState(nodeName.toStdString(), nodeActionCode.toStdString());
+        if(isFinal)
+        {
+            fsm->addFinalState(nodeName.toStdString());
+        }
+    }
+
+    for(const ConnectionId& connId : _connectivity)
+    {
+        // extract the data for this transtiiton
+        auto fromNodeName = _nodeNames.find(connId.outNodeId)->second;
+        auto toNodeName = _nodeNames.find(connId.inNodeId)->second;
+        auto transitionCode = _connectionCodes.find(connId)->second;
+
+        // create a transition isntance
+        Transition trans;
+        trans.fromState = fromNodeName.toStdString();
+        trans.toState = toNodeName.toStdString();
+        trans.condition = transitionCode.toStdString();
+        trans.delay = 1000; // TODO
+
+        // add it to the fsm
+        fsm->addTransition(trans);
+    }
+
+    // set the Start node
+    auto startNodeName = _nodeNames.find(_startStateId)->second;
+    fsm->setStartState(startNodeName.toStdString());
+
+    return fsm;
 }
 
 void DynamicPortsModel::addPort(NodeId nodeId, PortType portType, PortIndex portIndex)

@@ -146,11 +146,15 @@ void InterpretGenerator::generate(const Automaton& automaton, const QString& out
             QStringList lines = QString::fromStdString(pair.second).split('\n');
             if (!lines.isEmpty() && lines.first().startsWith("#name=")) {
                 function_name = lines.first().mid(6).trimmed(); // Extract function name after %name=
-            } else {
+            } else if (!lines.isEmpty() && lines.first().startsWith("# Enter code here:")) {
+                continue;  
+            } 
+            else {
                 function_name = "action_" + sanitize_python_identifier(pair.first);
             }
 
             QString action_code = replace_variables_with_get(QString::fromStdString(pair.second), automaton.getVariables());
+
 
             functions[function_name] = action_code;   // function to function body map
             state_action[QString::fromStdString(pair.first)] = function_name; // state to action name map

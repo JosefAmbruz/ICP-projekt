@@ -13,6 +13,7 @@
   /home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/nodeeditor-master/include/QtNodes/internal/OperatingSystem.hpp \
   /home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/nodeeditor-master/include/QtNodes/internal/Style.hpp \
   /home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/nodeeditor-master/include/QtNodes/internal/StyleCollection.hpp \
+  /home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/spec_parser/automaton-data.hpp \
   /usr/include/alloca.h \
   /usr/include/asm-generic/bitsperlong.h \
   /usr/include/asm-generic/errno-base.h \

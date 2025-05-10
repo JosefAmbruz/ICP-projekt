@@ -1,0 +1,42 @@
+from fsm_core import FSM, State, Transition
+import time
+import logging
+
+# --- FSM Actions ---
+
+def <action_name>(variables):
+    <action_code>
+
+<other_actions>
+
+# --- Transition Conditions ---
+
+def <transition_name>(variables):
+    bool_res = <bool_condition>
+    logging.info(f"Condition: <bool_condition> ? {bool_res}")
+    return bool_res
+
+<other_transition_conditions>
+
+# --- Main FSM Execution ---
+
+if __name__ == "__main__":
+    # 1. Create the FSM instance
+    <fsm_name> = FSM()
+
+    # 2. Define States
+
+
+    # 3. Define Transitions
+
+
+    # 4. Add Transitions to States
+
+
+    # 5. Add States to FSM
+
+
+    # 6. Set Initial Variables
+
+
+    # 7. Connect to client and Run the FSM

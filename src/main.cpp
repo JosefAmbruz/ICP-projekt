@@ -8,7 +8,6 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
-
     // new thread
     // Client.Run(w.ui)
     //     while () { data = socket.Read (); }
