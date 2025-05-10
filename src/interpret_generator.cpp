@@ -149,7 +149,7 @@ void InterpretGenerator::generate(const Automaton& automaton, const QString& out
     outfile << "    # 1. Create the FSM instance\n";
 
     QString fsm_name = sanitize_python_identifier(automaton.getName());
-    outfile << "    " << fsm_name << "FSM()\n\n";
+    outfile << "    " << fsm_name << " = FSM()\n\n";
 
     outfile << "    # 2. Define States\n";
     std::unordered_map<string, string> states = automaton.getStates();

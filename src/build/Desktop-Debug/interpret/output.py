@@ -13,7 +13,7 @@ def always_true_condition(variables):
 # --- Main FSM Execution ---
 if __name__ == "__main__":
     # 1. Create the FSM instance
-    _empty_name_placeholder_FSM()
+    _empty_name_placeholder_ = FSM()
 
     # 2. Define States
 
