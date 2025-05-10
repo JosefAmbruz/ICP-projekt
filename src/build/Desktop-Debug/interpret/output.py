@@ -47,19 +47,19 @@ if __name__ == "__main__":
     # 2. Define States
     state_State3 = State(
         name="State3",
-        action=lQ_X1,
+        action=Q1,
         is_start_state=False,
         is_finish_state=True
     )
     state_State2 = State(
         name="State2",
-        action=_7_XskC2,
+        action=MQY2,
         is_start_state=False,
         is_finish_state=False
     )
     state_State1 = State(
         name="State1",
-        action=skC3,
+        action=Y3,
         is_start_state=True,
         is_finish_state=False
     )
@@ -73,19 +73,19 @@ if __name__ == "__main__":
     client_port = 65432 # Default port, change if needed
 
     print(f"Starting FSM '{automaton.name}'...")
-    my_fsm.connect_to_client(host=client_host, port=client_port)
+    MyAutomaton.connect_to_client(host=client_host, port=client_port)
 
-    if my_fsm._client_socket: # Check if connection was successful
+    if MyAutomaton._client_socket: # Check if connection was successful
         try:
-            my_fsm.run()
+            MyAutomaton.run()
         except KeyboardInterrupt:
             print("\nFSM execution interrupted by user (Ctrl+C).")
-            my_fsm.stop()
+            MyAutomaton.stop()
         except Exception as e:
             logging.error(f"An unexpected error occurred during FSM execution: {e}", exc_info=True)
-            my_fsm.stop()
+            MyAutomaton.stop()
         finally:
-            my_fsm.stop() # Ensure stop is called
+            MyAutomaton.stop() # Ensure stop is called
             print("FSM runner script finished.")
     else:
         print("FSM did not connect to a client. Exiting.")
