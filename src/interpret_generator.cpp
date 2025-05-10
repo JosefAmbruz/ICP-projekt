@@ -288,8 +288,5 @@ void InterpretGenerator::generate(const Automaton& automaton, const QString& out
     outfile << "    else:\n";
     outfile << "        print(\"FSM did not connect to a client. Exiting.\")\n";
 
-
-
-
     file.close();
 }
