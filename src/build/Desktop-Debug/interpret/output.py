@@ -2,7 +2,8 @@ from fsm_core import FSM, State, Transition
 import time
 import logging
 
-# --- FSM Name:  ---
+# --- FSM Name: MyAutomaton ---
+# Description: This is a test automaton.
 
 # --- Define FSM Actions and Conditions ---
 
@@ -10,12 +11,58 @@ def always_true_condition(variables):
     pass
 
 
+def printIn_State_1(variables):
+    pass
+
+
+def printIn_State_2(variables):
+    pass
+
+
+def printIn_State_3(variables):
+    pass
+
+
+def x_eq_0(variables):
+    pass
+
+
+def x_gt_0(variables):
+    pass
+
+
+def x_lt_0(variables):
+    pass
+
+
+def y_lt_5(variables):
+    pass
+
+
 # --- Main FSM Execution ---
 if __name__ == "__main__":
     # 1. Create the FSM instance
-    _empty_name_placeholder_ = FSM()
+    MyAutomaton = FSM()
 
     # 2. Define States
+    state_State3 = State(
+        name="State3",
+        action=lQ_X1,
+        is_start_state=False,
+        is_finish_state=True
+    )
+    state_State2 = State(
+        name="State2",
+        action=_7_XskC2,
+        is_start_state=False,
+        is_finish_state=False
+    )
+    state_State1 = State(
+        name="State1",
+        action=skC3,
+        is_start_state=True,
+        is_finish_state=False
+    )
 
     # 3. Define Transitions
     # 4. Add Transitions to States

@@ -211,6 +211,27 @@ void MainWindow::on_button_Run_clicked()
 {
     Automaton automaton;
 
+    // --- test purposes only ---
+    // demonstration of how the generator interacts with the generator
+    automaton.setName("MyAutomaton");
+    automaton.setDescription("This is a test automaton.");
+
+    automaton.addVariable("x", "0");
+    automaton.addVariable("y", "0");
+
+    automaton.addState("State1", "print('In State 1')");
+    automaton.addState("State2", "print('In State 2')");
+    automaton.addState("State3", "print('In State 3')");
+
+    automaton.setStartState("State1");
+    automaton.addFinalState("State3");
+
+    automaton.addTransition({"State1", "State2", "x > 0", "", 0});
+    automaton.addTransition({"State2", "State3", "y < 5", "", 0});
+    automaton.addTransition({"State3", "State1", "x == 0", "", 0});
+    automaton.addTransition({"State1", "State3", "x < 0", "", 0});
+    // --- end ---
+
     InterpretGenerator generator;
     QString file_path = QDir::currentPath() + "/interpret/output.py";
 

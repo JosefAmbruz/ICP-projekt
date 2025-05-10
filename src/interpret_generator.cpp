@@ -14,6 +14,19 @@ QString sanitize_python_identifier(std::string name) {
     std::replace(name.begin(), name.end(), '-', '_');
     std::replace(name.begin(), name.end(), '.', '_');
 
+    // Replace comparison operators with shorthand equivalents
+    static const std::vector<std::pair<std::string, std::string>> replacements = {
+        {"<=", "le"}, {">=", "ge"}, {"<", "lt"}, {">", "gt"}, {"==", "eq"}, {"!=", "ne"}
+    };
+
+    for (const auto& [original, replacement] : replacements) {
+        size_t pos = 0;
+        while ((pos = name.find(original, pos)) != std::string::npos) {
+            name.replace(pos, original.length(), replacement);
+            pos += replacement.length();
+        }
+    }
+
     // Remove any characters not suitable for identifiers
     name.erase(std::remove_if(name.begin(), name.end(), [](char c) {
                    return !isalnum(c) && c != '_';
