@@ -69,6 +69,9 @@ public:
     void SetStartNode(NodeId const nodeId) { _startStateId = nodeId; }
     bool IsStartNode(NodeId const nodeId) { return nodeId == _startStateId; }
 
+    void SetConnectionDelay(ConnectionId const connId, int value) { _connectionDelays[connId] = value; }
+    int  GetConnectionDelay(ConnectionId const connId) { return _connectionDelays[connId]; }
+
     void SetFsmName(QString const name){ _fsmName = name; }
 
     void ToFile(std::string const filename) const;
@@ -136,6 +139,7 @@ private:
     std::unordered_map<NodeId, QString> _nodeNames;
     std::unordered_map<NodeId, QString> _nodeActionCodes;
     std::unordered_map<ConnectionId, QString> _connectionCodes;
+    std::unordered_map<ConnectionId, int> _connectionDelays;
     std::unordered_map<NodeId, bool> _nodeFinalStates;
     NodeId _startStateId = 0;
     QString _fsmName = "my_fsm";

@@ -25,6 +25,46 @@
     </property>
     <layout class="QVBoxLayout" name="vl_sidepanel">
      <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <item>
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>✏️FSM Name:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="lineEdit_fsmName">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>my_fsm</string>
+         </property>
+         <property name="maxLength">
+          <number>20</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="Line" name="line">
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
+       <property name="midLineWidth">
+        <number>2</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="QLabel" name="label">
@@ -32,7 +72,7 @@
           <bool>true</bool>
          </property>
          <property name="text">
-          <string>State Name:</string>
+          <string>✏️State Name:</string>
          </property>
         </widget>
        </item>
@@ -60,7 +100,7 @@
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>State Action:</string>
+        <string>⚙️State Action:</string>
        </property>
       </widget>
      </item>
@@ -79,8 +119,8 @@ p, li { white-space: pre-wrap; }
 hr { height: 1px; border-width: 0; }
 li.unchecked::marker { content: &quot;\2610&quot;; }
 li.checked::marker { content: &quot;\2612&quot;; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Segoe UI';&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="placeholderText">
         <string>Write Python-compliant code here. This will be used as the state action body. You can explicitly rename the generated condition, if you start the action body with: #name=&lt;yourfunctionname&gt;</string>
@@ -95,7 +135,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
           <bool>false</bool>
          </property>
          <property name="text">
-          <string>Is Final State</string>
+          <string>Is Final State 🏁</string>
          </property>
         </widget>
        </item>
@@ -114,7 +154,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <item>
       <widget class="QLabel" name="label_connCode">
        <property name="text">
-        <string>Transition condition:</string>
+        <string>ℹ️Transition condition:</string>
        </property>
       </widget>
      </item>
@@ -147,9 +187,43 @@ li.checked::marker { content: &quot;\2612&quot;; }
       </widget>
      </item>
      <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>🕒Transition Delay:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBox_transDelayMs">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="maximum">
+          <number>10000</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_6">
+         <property name="maximumSize">
+          <size>
+           <width>20</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>ms</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>Define Variables:</string>
+        <string>📦Define Variables:</string>
        </property>
       </widget>
      </item>
@@ -187,7 +261,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
 }</string>
        </property>
        <property name="frameShape">
-        <enum>QFrame::Shape::NoFrame</enum>
+        <enum>QFrame::NoFrame</enum>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
@@ -205,7 +279,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
            </size>
           </property>
           <property name="text">
-           <string>➕ State</string>
+           <string>➕ Add State</string>
           </property>
           <property name="checkable">
            <bool>false</bool>
@@ -224,21 +298,14 @@ li.checked::marker { content: &quot;\2612&quot;; }
            <bool>true</bool>
           </property>
           <property name="text">
-           <string> </string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="lineEdit_fsmName">
-          <property name="text">
-           <string>my_fsm</string>
+           <string/>
           </property>
          </widget>
         </item>
         <item>
          <spacer name="horizontalSpacer">
           <property name="orientation">
-           <enum>Qt::Orientation::Vertical</enum>
+           <enum>Qt::Vertical</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -331,8 +398,8 @@ p, li { white-space: pre-wrap; }
 hr { height: 1px; border-width: 0; }
 li.unchecked::marker { content: &quot;\2610&quot;; }
 li.checked::marker { content: &quot;\2612&quot;; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif';&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </item>
@@ -345,7 +412,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <x>0</x>
      <y>0</y>
      <width>1236</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menufile">

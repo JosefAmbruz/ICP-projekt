@@ -67,6 +67,8 @@ private slots:
 
     void on_button_Stop_clicked();
 
+    void on_spinBox_transDelayMs_valueChanged(int arg1);
+
 private:
     Ui::MainWindow *ui;
     void initNodeCanvas();

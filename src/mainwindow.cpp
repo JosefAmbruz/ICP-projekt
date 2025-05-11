@@ -325,10 +325,13 @@ void MainWindow::onNodeClicked(NodeId const nodeId)
     // Save the node id that was clicked
     lastSelectedNode = nodeId;
 
+    // disable UI for connection settings
+    ui->textEdit_connCond->setEnabled(false);
+    ui->spinBox_transDelayMs->setEnabled(false);
+
     // Enable the code text edit and state name lineedit but disable conn edit
     ui->textEdit_actionCode->setEnabled(true);
     ui->lineEdit_stateName->setEnabled(true);
-    ui->textEdit_connCond->setEnabled(false);
     // enable the button for setting start state
     ui->pushButton_setStartState->setEnabled(true);
     // enable checkbox fgor setting final state
@@ -368,6 +371,7 @@ void MainWindow::onNodeSelectionChanged()
         ui->textEdit_connCond->setEnabled(false);
         ui->pushButton_setStartState->setEnabled(false);
         ui->checkBox_isFinal->setEnabled(false);
+        ui->spinBox_transDelayMs->setEnabled(false);
     }
 }
 
@@ -377,12 +381,15 @@ void MainWindow::onConnectionClicked(ConnectionId const connId)
     // save the conn id
     lastSelectedConnId = connId;
 
+    // enable the textEdit for the connection condition code:
+    ui->textEdit_connCond->setEnabled(true);
+    // enable the spinBox for transition delay
+    ui->spinBox_transDelayMs->setEnabled(true);
+
     // while editing the connection id, disable state name line edit
     ui->lineEdit_stateName->setEnabled(false);
     // disable the textEdit for the code editing
     ui->textEdit_actionCode->setEnabled(false);
-    // enable the textEdit for the connection condition code:
-    ui->textEdit_connCond->setEnabled(true);
     // disable the finalState checkbox and start stateb btn:
     ui->checkBox_isFinal->setEnabled(false);
     ui->pushButton_setStartState->setEnabled(false);
@@ -390,6 +397,10 @@ void MainWindow::onConnectionClicked(ConnectionId const connId)
     // add the current connection code:
     auto connCode = graphModel->GetConnectionCode(connId);
     ui->textEdit_connCond->setText(connCode);
+
+    // update the spinbox for delay ms
+    auto delayMs = graphModel->GetConnectionDelay(connId);
+    ui->spinBox_transDelayMs->setValue(delayMs);
 }
 
 void MainWindow::onSaveToFileClicked()
@@ -456,7 +467,6 @@ void MainWindow::on_button_Run_clicked()
     }
 
     // --- 2. Generate Python FSM Code ---
-
     InterpretGenerator generator;
     QString pythonFilePath = QDir::currentPath() + "/interpret/output.py";
     QDir().mkpath(QFileInfo(pythonFilePath).path()); // Ensure directory exists
@@ -576,3 +586,8 @@ void MainWindow::on_lineEdit_fsmName_textChanged(const QString &text)
     graphModel->SetFsmName(text);
 }
 
+
+void MainWindow::on_spinBox_transDelayMs_valueChanged(int value)
+{
+    graphModel->SetConnectionDelay(lastSelectedConnId, value);
+}
