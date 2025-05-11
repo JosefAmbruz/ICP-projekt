@@ -81,5 +81,9 @@ private:
     // main window
     FsmClient* fsmClient;
     QProcess* pythonFsmProcess;
+
+    QString automatonName; // member variable intended to be initialized when the spec
+                           // is loaded from the source file
+    QString automatonDescription;
 };
 #endif // MAINWINDOW_H
