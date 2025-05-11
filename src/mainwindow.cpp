@@ -246,15 +246,14 @@ void MainWindow::onFsmClientMessageReceived(const QJsonObject& msg) {
             QJsonObject payload = msg["payload"].toObject();
             if (payload.contains("name")) {
                 QString currentStateName = payload["name"].toString();
-                // ui->label_currentState->setText("Current FSM State: " + currentStateName);
+                ui->label_currentState->setText("Current State: " + currentStateName);
 
                 // Example: Highlight the current state node in your QtNodes view
                 // You'll need a mapping from state name to NodeId
-                // NodeId currentFsmNodeId = graphModel->findNodeByName(currentStateName);
-                // if (currentFsmNodeId != QtNodes::InvalidNodeId) {
-                //    nodeScene->clearSelection();
-                //    nodeScene->nodeItems().value(currentFsmNodeId)->setSelected(true);
-                // }
+                NodeId currentFsmNodeId = graphModel->findNodeByName(currentStateName);
+                if (currentFsmNodeId != QtNodes::InvalidNodeId) {
+
+                }
             }
         }
     }

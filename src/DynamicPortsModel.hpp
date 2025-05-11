@@ -89,6 +89,8 @@ public:
 
     bool nodeExists(NodeId const nodeId) const override;
 
+    NodeId findNodeByName(QString const nodeName);
+
     QVariant nodeData(NodeId nodeId, NodeRole role) const override;
 
     bool setNodeData(NodeId nodeId, NodeRole role, QVariant value) override;

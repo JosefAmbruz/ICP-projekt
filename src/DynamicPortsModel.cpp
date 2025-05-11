@@ -103,6 +103,16 @@ bool DynamicPortsModel::nodeExists(NodeId const nodeId) const
     return (_nodeIds.find(nodeId) != _nodeIds.end());
 }
 
+NodeId DynamicPortsModel::findNodeByName(QString const nodeName)
+{
+    for (const auto& pair : _nodeNames) {
+        if (pair.second == nodeName) {
+            return pair.first;
+        }
+    }
+    return QtNodes::InvalidNodeId;
+}
+
 PortAddRemoveWidget *DynamicPortsModel::widget(NodeId nodeId) const
 {
     auto it = _nodeWidgets.find(nodeId);
