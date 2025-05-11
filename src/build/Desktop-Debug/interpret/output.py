@@ -2,7 +2,7 @@ from fsm_core import FSM, State, Transition
 import time
 import logging
 
-# --- FSM Name: Automaton ---
+# --- FSM Name: tralalero ---
 # Description: Description
 
 # --- Define FSM Actions and Conditions ---
@@ -22,7 +22,7 @@ def condition_always_true(variables):
 # --- Main FSM Execution ---
 if __name__ == "__main__":
     # 1. Create the FSM instance
-    Automaton = FSM()
+    tralalero = FSM()
 
     # 2. Define States
     state_State_1 = State(
@@ -49,8 +49,8 @@ if __name__ == "__main__":
     state_State_1.add_transition(tr_State_1_to_State_2_0)
 
     # 5. Add States to FSM
-    Automaton.add_state(state_State_1)
-    Automaton.add_state(state_State_2)
+    tralalero.add_state(state_State_1)
+    tralalero.add_state(state_State_2)
 
     # 6. Set Initial Variables
     # No initial variables defined in specification.
@@ -59,20 +59,20 @@ if __name__ == "__main__":
     client_host = 'localhost'
     client_port = 65432 # Default port, change if needed
 
-    print(f"Starting FSM 'Automaton'...")
-    Automaton.connect_to_client(host=client_host, port=client_port)
+    print(f"Starting FSM 'tralalero'...")
+    tralalero.connect_to_client(host=client_host, port=client_port)
 
-    if Automaton._client_socket: # Check if connection was successful
+    if tralalero._client_socket: # Check if connection was successful
         try:
-            Automaton.run()
+            tralalero.run()
         except KeyboardInterrupt:
             print("\nFSM execution interrupted by user (Ctrl+C).")
-            Automaton.stop()
+            tralalero.stop()
         except Exception as e:
             logging.error(f"An unexpected error occurred during FSM execution: {e}", exc_info=True)
-            Automaton.stop()
+            tralalero.stop()
         finally:
-            Automaton.stop() # Ensure stop is called
+            tralalero.stop() # Ensure stop is called
             print("FSM runner script finished.")
     else:
         print("FSM did not connect to a client. Exiting.")
