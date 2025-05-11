@@ -25,9 +25,17 @@ A graphical editor and interpreter for designing, simulating, and running finite
 - Visual FSM editor with node-based interface
 - Add states and transitions
 - Python code generation and execution for FSMs
-- TCP client-server communication with Python FSM interpreter
+- TCP client-server communication with Python FSM interpreter using custom protocol
 - Logging and real-time output display
-- Save/load FSM projects
+- Save FSM projects into human readable, custom format
+
+---
+
+## Incomplete/Missing Functionality
+
+- Loading FSM from source file
+- Editing variables at runtime
+- Examples for testing
 
 ---
 
