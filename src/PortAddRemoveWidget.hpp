@@ -15,6 +15,11 @@
  * - Displaying and managing [+] and [-] button groups for each port.
  * - Handling user interactions to add or remove ports.
  * - Communicating port changes to the associated DynamicPortsModel.
+ * 
+ * Notable mentions:
+ *  - PortAddRemoveWidget class has been inspired by the example provided in the
+ *    github repository of the nodeeditor library "dynamic_ports"
+ *    link: https://github.com/paceholder/nodeeditor/tree/master/examples
  *
  * Example layout:
  * ```
