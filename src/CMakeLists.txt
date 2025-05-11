@@ -34,7 +34,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 
         DynamicPortsModel.cpp PortAddRemoveWidget.cpp
         DynamicPortsModel.hpp PortAddRemoveWidget.hpp
-        controller.h controller.cpp
         interpret_generator.h interpret_generator.cpp
 
     )

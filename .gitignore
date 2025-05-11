@@ -84,3 +84,7 @@ CMakeLists.txt.user*
 .uic/
 /build*/
 /src/build/
+
+# Doxygen
+/html/
+/latex/

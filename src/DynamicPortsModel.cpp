@@ -1,14 +1,25 @@
+/**
+ * @file DynamicPortsModel.cpp
+ * @brief Implementation of the DynamicPortsModel class for managing dynamic nodes and connections in the FSM editor.
+ *
+ * This file contains the implementation of the DynamicPortsModel class, which provides functionality
+ * for creating, modifying, and serializing nodes and connections in the graphical FSM editor.
+ * It supports adding/removing nodes and ports, managing node and connection data, and converting
+ * the internal model to and from persistent representations (such as JSON or custom file formats).
+ *
+ * Key responsibilities:
+ * - Managing the set of nodes and connections in the FSM editor.
+ * - Providing methods to add, remove, and query nodes, ports, and connections.
+ * - Handling serialization and deserialization of the FSM graph to/from JSON and custom formats.
+ * - Supporting the conversion of the graphical model to an Automaton object for code generation.
+ * - Emitting signals for UI updates when the model changes.
+ *
+ * @author Jakub Kovařík, Josef Ambruz
+ * @date 2025-5-11
+ */
+
 #include "DynamicPortsModel.hpp"
 
-#include "PortAddRemoveWidget.hpp"
-
-#include <QtNodes/ConnectionIdUtils>
-
-#include <QJsonArray>
-
-#include <iterator>
-#include <fstream>
-#include <iostream>
 
 DynamicPortsModel::DynamicPortsModel()
     : _nextNodeId{1}

@@ -1,3 +1,21 @@
+/**
+ * @file PortAddRemoveWidget.cpp
+ * @brief Implementation of the PortAddRemoveWidget class for dynamic port management in the FSM editor.
+ *
+ * This file contains the implementation of the PortAddRemoveWidget class, which provides a QWidget-based
+ * interface for adding and removing ports on nodes in the graphical FSM editor. The widget displays
+ * groups of [+] and [-] buttons for each port, allowing users to dynamically modify the number of
+ * input and output ports on a node.
+ *
+ * Key responsibilities:
+ * - Displaying and managing [+] and [-] button groups for each port.
+ * - Handling user interactions to add or remove ports.
+ * - Communicating port changes to the associated DynamicPortsModel.
+ *
+ * @author Jakub Kovařík
+ * @date 2025-5-11
+ */
+
 #include "PortAddRemoveWidget.hpp"
 
 #include "DynamicPortsModel.hpp"

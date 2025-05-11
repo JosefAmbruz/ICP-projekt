@@ -1,28 +1,25 @@
+/**
+ * @file mainwindow.cpp
+ * @brief Implementation of the MainWindow class, the main GUI for the FSM editor and runner.
+ *
+ * This file contains the implementation of the MainWindow class, which manages the application's
+ * graphical user interface, node canvas, FSM client, and Python FSM process. It provides slots
+ * for handling user interactions, updating the UI, managing FSM state, and communicating with
+ * both the Python FSM interpreter and the FSM client.
+ *
+ * Key responsibilities:
+ * - Initializing and managing the node editor and FSM model.
+ * - Handling user actions such as adding states, editing transitions, and saving/loading scenes.
+ * - Generating Python FSM scripts and launching the Python interpreter process.
+ * - Managing TCP communication with the Python FSM server via FsmClient.
+ * - Updating the UI in response to FSM and process events.
+ *
+ * @author Josef Ambruz, Jakub Kovařík
+ * @date 2025-5-11
+ */
+
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
-
-#include <QtNodes/ConnectionStyle>
-#include <QtNodes/GraphicsView>
-#include <QtNodes/StyleCollection>
-
-#include <QAction>
-#include <QFileDialog>
-#include <QScreen>
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QMenuBar>
-#include <QtWidgets/QVBoxLayout>
-#include <QProcess>
-#include <QFile>
-#include <QTextStream>
-#include <QThread>
-#include <QShortcut>
-
-
-#include <QApplication>
-#include "DynamicPortsModel.hpp"
-#include "interpret_generator.h"
-#include "spec_parser/automaton-data.hpp"
-#include "client.hpp"
 
 using QtNodes::BasicGraphicsScene;
 using QtNodes::ConnectionStyle;

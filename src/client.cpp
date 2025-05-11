@@ -1,3 +1,31 @@
+
+/**
+ * @file client.cpp
+ * @brief Implementation of the FsmClient class for managing communication with an FSM server.
+ * 
+ * This file contains the implementation of the FsmClient class, which provides functionality
+ * to connect to an FSM server, send messages, and handle incoming messages. The communication
+ * is based on JSON messages sent over a QTcpSocket.
+ * 
+ * @author Josef
+ * @date 2023
+ */
+
+ /**
+ * @class FsmClient
+ * @brief A client class for communicating with an FSM server using JSON over TCP.
+ * 
+ * The FsmClient class provides methods to connect to an FSM server, send commands, and
+ * handle incoming messages. It uses Qt's QTcpSocket for network communication and emits
+ * signals for various events such as connection, disconnection, and errors.
+ * 
+ * @note This class assumes that JSON messages are newline-delimited.
+ * 
+ * @signal connected() Emitted when the client successfully connects to the server.
+ * @signal disconnected() Emitted when the client disconnects from the server.
+ * @signal fsmError(const QString &error) Emitted when a socket error occurs.
+ * @signal messageReceived(const QJsonObject &message) Emitted when a valid JSON message is received.
+ */
 #include "client.hpp"
 
 FsmClient::FsmClient(QObject *parent)

@@ -1,3 +1,10 @@
+/**
+ * @file interpret_generator.cpp
+ * @brief Implementation of the InterpretGenerator class for generating Python FSM scripts from an Automaton.
+ * @author Josef Ambruz
+ * @date 2025-5-11
+ */
+
 #include "interpret_generator.h"
 #include <QDebug>
 #include <QDir>

@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "graphicsview": "cpp",
+        "basicgraphicsscene": "cpp"
+    }
+}
