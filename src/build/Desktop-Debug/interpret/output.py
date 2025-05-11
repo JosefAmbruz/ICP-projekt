@@ -8,28 +8,20 @@ import logging
 # --- Define FSM Actions and Conditions ---
 
 def action_State_1(fsm, variables):
-    x = variables.get('x')
-    
-    print("In State 1")
-    fsm.set_variable('x', x)
-    
+    pass
 
 
 def action_State_2(fsm, variables):
     x = variables.get('x')
     
-    print("In State 2")
     x += 1
-    print(x)
-    
     fsm.set_variable('x', x)
     
 
 
-def action_State_Final(fsm, variables):
+def action_State_3(fsm, variables):
     x = variables.get('x')
     
-    print("In State Final")
     print(x)
     fsm.set_variable('x', x)
     
@@ -37,10 +29,6 @@ def action_State_Final(fsm, variables):
 
 def condition_always_true(fsm, variables):
     return True
-
-
-def condition_x_gt_2(fsm, variables):
-    return (variables.get('x') > 2)
 
 
 # --- Main FSM Execution ---
@@ -61,39 +49,33 @@ if __name__ == "__main__":
         is_start_state=False,
         is_finish_state=False
     )
-    state_State_Final = State(
-        name="State Final",
-        action=action_State_Final,
+    state_State_3 = State(
+        name="State 3",
+        action=action_State_3,
         is_start_state=False,
         is_finish_state=True
     )
 
     # 3. Define Transitions
-    tr_State_1_to_State_Final_0 = Transition(
-        target_state_name="State Final",
-        condition=condition_x_gt_2,
-        delay=1000.0
-    )
-    tr_State_2_to_State_1_1 = Transition(
-        target_state_name="State 1",
+    tr_State_2_to_State_3_0 = Transition(
+        target_state_name="State 3",
         condition=condition_always_true,
         delay=1000.0
     )
-    tr_State_1_to_State_2_2 = Transition(
+    tr_State_1_to_State_2_1 = Transition(
         target_state_name="State 2",
         condition=condition_always_true,
         delay=1000.0
     )
 
     # 4. Add Transitions to States
-    state_State_1.add_transition(tr_State_1_to_State_Final_0)
-    state_State_2.add_transition(tr_State_2_to_State_1_1)
-    state_State_1.add_transition(tr_State_1_to_State_2_2)
+    state_State_2.add_transition(tr_State_2_to_State_3_0)
+    state_State_1.add_transition(tr_State_1_to_State_2_1)
 
     # 5. Add States to FSM
     my_fsm.add_state(state_State_1)
     my_fsm.add_state(state_State_2)
-    my_fsm.add_state(state_State_Final)
+    my_fsm.add_state(state_State_3)
 
     # 6. Set Initial Variables
     my_fsm.set_variable("x", 0)

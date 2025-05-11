@@ -205,3 +205,14 @@
 70	6190	1746989022535664521	CMakeFiles/icp.dir/interpret_generator.cpp.o	d1e760a2be2492f
 69	8057	1746989022534664533	CMakeFiles/icp.dir/mainwindow.cpp.o	9c479209611c9cec
 8057	8707	1746989030522564712	icp	d6de34235a2844a2
+18	4498	1746989450416291605	icp_autogen/timestamp	7680f27f41602284
+18	4498	1746989450416291605	icp_autogen/mocs_compilation.cpp	7680f27f41602284
+18	4498	1746989450416291605	/home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/icp_autogen/timestamp	7680f27f41602284
+18	4498	1746989450416291605	/home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/icp_autogen/mocs_compilation.cpp	7680f27f41602284
+4523	28146	1746989450593320132	CMakeFiles/icp.dir/PortAddRemoveWidget.cpp.o	953bd33693eda4a1
+4512	38418	1746989450581289660	CMakeFiles/icp.dir/main.cpp.o	28ebc7f08c8ea7f6
+4520	38945	1746989450589707681	CMakeFiles/icp.dir/interpret_generator.cpp.o	d1e760a2be2492f
+4523	39612	1746989450592289530	CMakeFiles/icp.dir/DynamicPortsModel.cpp.o	d2e9f0b332b66837
+4520	39664	1746989450589289566	CMakeFiles/icp.dir/mainwindow.cpp.o	9c479209611c9cec
+4510	39897	1746989450579289684	CMakeFiles/icp.dir/icp_autogen/mocs_compilation.cpp.o	8029180cbeec24fc
+39897	41825	1746989485965871353	icp	d6de34235a2844a2
