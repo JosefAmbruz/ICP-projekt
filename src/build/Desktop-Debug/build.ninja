@@ -103,15 +103,6 @@ build CMakeFiles/icp.dir/spec_parser/automaton-data.cpp.o: CXX_COMPILER__icp_uns
   OBJECT_DIR = CMakeFiles/icp.dir
   OBJECT_FILE_DIR = CMakeFiles/icp.dir/spec_parser
 
-build CMakeFiles/icp.dir/qvariablerow.cpp.o: CXX_COMPILER__icp_unscanned_Debug /home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/qvariablerow.cpp || cmake_object_order_depends_target_icp
-  CONFIG = Debug
-  DEFINES = -DNODE_EDITOR_SHARED -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB
-  DEP_FILE = CMakeFiles/icp.dir/qvariablerow.cpp.o.d
-  FLAGS = -g -std=gnu++17 -fdiagnostics-color=always -mno-direct-extern-access
-  INCLUDES = -I/home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/icp_autogen/include -I/home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/nodeeditor-master/include -isystem /usr/include/qt6/QtCore -isystem /usr/include/qt6 -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -isystem /usr/include/qt6/QtOpenGL -isystem /usr/include/qt6/QtNetwork
-  OBJECT_DIR = CMakeFiles/icp.dir
-  OBJECT_FILE_DIR = CMakeFiles/icp.dir
-
 build CMakeFiles/icp.dir/DynamicPortsModel.cpp.o: CXX_COMPILER__icp_unscanned_Debug /home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/DynamicPortsModel.cpp || cmake_object_order_depends_target_icp
   CONFIG = Debug
   DEFINES = -DNODE_EDITOR_SHARED -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB
@@ -147,7 +138,7 @@ build CMakeFiles/icp.dir/controller.cpp.o: CXX_COMPILER__icp_unscanned_Debug /ho
 #############################################
 # Link the executable icp
 
-build icp: CXX_EXECUTABLE_LINKER__icp_Debug CMakeFiles/icp.dir/icp_autogen/mocs_compilation.cpp.o CMakeFiles/icp.dir/main.cpp.o CMakeFiles/icp.dir/mainwindow.cpp.o CMakeFiles/icp.dir/client.cpp.o CMakeFiles/icp.dir/interpret_generator.cpp.o CMakeFiles/icp.dir/spec_parser/automaton-data.cpp.o CMakeFiles/icp.dir/qvariablerow.cpp.o CMakeFiles/icp.dir/DynamicPortsModel.cpp.o CMakeFiles/icp.dir/PortAddRemoveWidget.cpp.o CMakeFiles/icp.dir/controller.cpp.o | lib/libQtNodes.so /usr/lib/libQt6Network.so.6.9.0 /usr/lib/libQt6Widgets.so.6.9.0 /usr/lib/libQt6OpenGL.so.6.9.0 /usr/lib/libQt6Gui.so.6.9.0 /usr/lib/libGLX.so /usr/lib/libOpenGL.so /usr/lib/libQt6Core.so.6.9.0 || icp_autogen icp_autogen_timestamp_deps lib/libQtNodes.so
+build icp: CXX_EXECUTABLE_LINKER__icp_Debug CMakeFiles/icp.dir/icp_autogen/mocs_compilation.cpp.o CMakeFiles/icp.dir/main.cpp.o CMakeFiles/icp.dir/mainwindow.cpp.o CMakeFiles/icp.dir/client.cpp.o CMakeFiles/icp.dir/interpret_generator.cpp.o CMakeFiles/icp.dir/spec_parser/automaton-data.cpp.o CMakeFiles/icp.dir/DynamicPortsModel.cpp.o CMakeFiles/icp.dir/PortAddRemoveWidget.cpp.o CMakeFiles/icp.dir/controller.cpp.o | lib/libQtNodes.so /usr/lib/libQt6Network.so.6.9.0 /usr/lib/libQt6Widgets.so.6.9.0 /usr/lib/libQt6OpenGL.so.6.9.0 /usr/lib/libQt6Gui.so.6.9.0 /usr/lib/libGLX.so /usr/lib/libOpenGL.so /usr/lib/libQt6Core.so.6.9.0 || icp_autogen icp_autogen_timestamp_deps lib/libQtNodes.so
   CONFIG = Debug
   DEP_FILE = CMakeFiles/icp.dir/link.d
   FLAGS = -g
