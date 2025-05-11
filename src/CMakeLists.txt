@@ -31,7 +31,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(icp
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        qvariablerow.h qvariablerow.cpp
+
         DynamicPortsModel.cpp PortAddRemoveWidget.cpp
         DynamicPortsModel.hpp PortAddRemoveWidget.hpp
         controller.h controller.cpp
