@@ -15,6 +15,7 @@ public:
     ~FsmClient();
 
     void connectToServer(const QString &host, quint16 port);
+    bool isConnected() const;
     void disconnectFromServer();
 
     // Methods to send commands to the FSM

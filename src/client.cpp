@@ -25,6 +25,11 @@ void FsmClient::connectToServer(const QString &host, quint16 port)
     }
 }
 
+bool FsmClient::isConnected() const
+{
+    return m_socket->state() == QAbstractSocket::ConnectedState;
+}
+
 void FsmClient::disconnectFromServer()
 {
     if (m_socket->state() != QAbstractSocket::UnconnectedState) {

@@ -136,6 +136,9 @@ void MainWindow::initNodeCanvas()
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    // client and fsm interpret initialization
+    , fsmClient(new FsmClient(this))
+    , pythonFsmProcess(new QProcess(this))
 {
     ui->setupUi(this);
     initNodeCanvas();
@@ -143,12 +146,136 @@ MainWindow::MainWindow(QWidget *parent)
     connect(nodeScene, &BasicGraphicsScene::nodeClicked, this, &MainWindow::onNodeClicked);
     connect(nodeScene, &BasicGraphicsScene::selectionChanged, this, &MainWindow::onNodeSelectionChanged);
     connect(nodeScene, &BasicGraphicsScene::connectionClicked, this, & MainWindow::onConnectionClicked);
+
+    // --- Connect FsmClient signals ---
+    connect(fsmClient, &FsmClient::connected, this, &MainWindow::onFsmClientConnected);
+    connect(fsmClient, &FsmClient::disconnected, this, &MainWindow::onFsmClientDisconnected);
+    connect(fsmClient, &FsmClient::messageReceived, this, &MainWindow::onFsmClientMessageReceived);
+    connect(fsmClient, &FsmClient::fsmError, this, &MainWindow::onFsmClientError);
+
+    // --- Connect QProcess signals ---
+    connect(pythonFsmProcess, &QProcess::finished, this, &MainWindow::onPythonProcessFinished);
+    connect(pythonFsmProcess, &QProcess::errorOccurred, this, &MainWindow::onPythonProcessError);
+    connect(pythonFsmProcess, &QProcess::stateChanged, this, &MainWindow::onPythonProcessStateChanged);
+    connect(pythonFsmProcess, &QProcess::readyReadStandardOutput, this, &MainWindow::onPythonReadyReadStdOut);
+    connect(pythonFsmProcess, &QProcess::readyReadStandardError, this, &MainWindow::onPythonReadyReadStdErr);
 }
 
 MainWindow::~MainWindow()
 {
+    // Ensure Python process is terminated if running
+    if (pythonFsmProcess && pythonFsmProcess->state() != QProcess::NotRunning) {
+        qInfo() << "MainWindow destructor: Terminating Python FSM process.";
+        pythonFsmProcess->terminate();
+        if (!pythonFsmProcess->waitForFinished(1000)) {
+            pythonFsmProcess->kill();
+            pythonFsmProcess->waitForFinished();
+        }
+    }
+    // FsmClient and QProcess will be deleted due to parent-child relationship
+    // if fsmClient is connected, its destructor should handle disconnection, hopefully.
     delete ui;
 }
+
+
+/**
+ *    FSMCLIENT SLOTS
+ *  ========================================================================
+ *  ========================================================================
+ */
+
+// TODO: this part was written with help of LLM and should be taken with grain
+// of salt, it only models the supposed functionality
+void MainWindow::onFsmClientConnected() {
+    qInfo() << "[MainWindow] Connected to FSM server!";
+    // Update UI (e.g., enable "Send Variable" button, change status label)
+    ui->textEdit_logOut->append("CLIENT: Connected to FSM server.");
+}
+
+void MainWindow::onFsmClientDisconnected() {
+    qInfo() << "[MainWindow] Disconnected from FSM server.";
+    // Update UI
+    ui->textEdit_logOut->append("CLIENT: Disconnected from FSM server.");
+}
+
+void MainWindow::onFsmClientMessageReceived(const QJsonObject& msg) {
+    qInfo() << "[MainWindow] Message from FSM:" << msg;
+    // Update your UI based on the message
+    // Example: if msg["type"] == "CURRENT_STATE", update a label with msg["payload"]["name"]
+    QJsonDocument doc(msg);
+    ui->textEdit_logOut->append("FSM -> CLIENT: " + doc.toJson(QJsonDocument::Compact));
+
+    if (msg.contains("type") && msg["type"].toString() == "CURRENT_STATE") {
+        if (msg.contains("payload") && msg["payload"].isObject()) {
+            QJsonObject payload = msg["payload"].toObject();
+            if (payload.contains("name")) {
+                QString currentStateName = payload["name"].toString();
+                // ui->label_currentState->setText("Current FSM State: " + currentStateName);
+
+                // Example: Highlight the current state node in your QtNodes view
+                // You'll need a mapping from state name to NodeId
+                // NodeId currentFsmNodeId = graphModel->findNodeByName(currentStateName);
+                // if (currentFsmNodeId != QtNodes::InvalidNodeId) {
+                //    nodeScene->clearSelection();
+                //    nodeScene->nodeItems().value(currentFsmNodeId)->setSelected(true);
+                // }
+            }
+        }
+    }
+}
+
+/**
+ *    QPROCESS SLOTS
+ *  ========================================================================
+ *  ========================================================================
+ */
+
+void MainWindow::onPythonProcessFinished(int exitCode, QProcess::ExitStatus exitStatus) {
+    qInfo() << "[MainWindow] Python FSM process finished. Exit code:" << exitCode << "Status:" << exitStatus;
+    QString stdOut = pythonFsmProcess->readAllStandardOutput();
+    QString stdErr = pythonFsmProcess->readAllStandardError();
+    if(!stdOut.isEmpty()) ui->textEdit_logOut->append("PYTHON STDOUT (on finish):\n" + stdOut);
+    if(!stdErr.isEmpty()) ui->textEdit_logOut->append("PYTHON STDERR (on finish):\n" + stdErr);
+
+    // If client was connected, it will likely disconnect now or soon
+    // Update UI to show FSM is not running
+    // TODO: add correct label
+    //ui->label_currentState->setText("Current FSM State: Not Running");
+}
+
+void MainWindow::onPythonProcessError(QProcess::ProcessError error) {
+    qWarning() << "[MainWindow] Python FSM process error:" << error << pythonFsmProcess->errorString();
+    ui->textEdit_logOut->append("PYTHON PROCESS ERROR: " + pythonFsmProcess->errorString());
+    // Update UI
+}
+
+void MainWindow::onPythonProcessStateChanged(QProcess::ProcessState newState) {
+    qInfo() << "[MainWindow] Python FSM process state changed to:" << newState;
+    // You can update UI based on this, e.g., "Starting...", "Running..."
+}
+
+void MainWindow::onPythonReadyReadStdOut() {
+    QByteArray data = pythonFsmProcess->readAllStandardOutput();
+    qInfo() << "[PYTHON STDOUT] " << data.trimmed(); // Log to console/debug output
+    ui->textEdit_logOut->append("PYTHON STDOUT: " + QString::fromUtf8(data)); // Also show in UI log
+    // You could parse this for "Server ready" messages
+}
+
+void MainWindow::onPythonReadyReadStdErr() {
+    QByteArray data = pythonFsmProcess->readAllStandardError();
+    qWarning() << "[PYTHON STDERR] " << data.trimmed(); // Log to console/debug output
+    ui->textEdit_logOut->append("PYTHON STDERR: " + QString::fromUtf8(data)); // Also show in UI log
+}
+
+
+void MainWindow::onFsmClientError(const QString& err) {
+    qWarning() << "[MainWindow] FSM Client error:" << err;
+    ui->textEdit_logOut->append("CLIENT ERROR: " + err);
+    // Update UI
+}
+
+
+
 
 /**
  *    NODEEDITOR SIGNALS
@@ -264,9 +391,37 @@ std::vector<std::pair<std::string, std::string>> parseVariableTextBox(const QStr
 
 void MainWindow::on_button_Run_clicked()
 {
-    Automaton* automaton = graphModel->ToAutomaton();
+    // --- 0. Stop any existing FSM and client ---
+    if (pythonFsmProcess->state() != QProcess::NotRunning) {
+        qInfo() << "[MainWindow] Stopping existing FSM process...";
+        pythonFsmProcess->terminate(); // Or pythonFsmProcess->kill();
+        if (!pythonFsmProcess->waitForFinished(3000)) { // Wait 3s
+            qWarning() << "[MainWindow] Python FSM process did not terminate gracefully. Forcing kill.";
+            pythonFsmProcess->kill();
+            pythonFsmProcess->waitForFinished(); // Wait for kill
+        }
+        qInfo() << "[MainWindow] Previous FSM process stopped.";
+    }
 
-    // get the texbox conents
+    // TODO: implement the isConnected method
+    if (fsmClient->isConnected()) {
+        qInfo() << "[MainWindow] Disconnecting existing client...";
+        fsmClient->disconnectFromServer();
+        // Wait for disconnection or just proceed, as new connection will override
+    }
+
+    // here update UI to maybe reflect "not running"
+
+    // --- 1. Get Automaton Data ---
+    std::unique_ptr<Automaton> automaton(graphModel->ToAutomaton());
+    if (!automaton) {
+        qWarning() << "[MainWindow] Failed to get automaton data from model.";
+        // Show error to user
+        return;
+    }
+
+    // --- Variables ---
+    // get the texbox contents
     auto variablesTextEdit = ui->textEdit_vars->toPlainText();
     // parse the variable definition textbox contents
     auto variables = parseVariableTextBox(variablesTextEdit);
@@ -277,42 +432,48 @@ void MainWindow::on_button_Run_clicked()
         automaton->addVariable(varName, value);
     }
 
+    // --- 2. Generate Python FSM Code ---
+
     InterpretGenerator generator;
-    QString file_path = QDir::currentPath() + "/interpret/output.py";
+    QString pythonFilePath = QDir::currentPath() + "/interpret/output.py";
+    QDir().mkpath(QFileInfo(pythonFilePath).path()); // Ensure directory exists
 
-    qDebug() << "File path:" << file_path;
-    generator.generate(*automaton, file_path);
+    qDebug() << "[MainWindow] Generating Python FSM at:" << pythonFilePath;
+    generator.generate(*automaton, pythonFilePath);
 
-    // --- Run the generated Python file and redirect output to log file ---
-    QString pythonExe = "python3";
+    // --- 3. Run the generated Python file ---
+    QString pythonExe = "python3"; // this could be configurable
     QString logFilePath = QDir::currentPath() + "/interpret/output.log";
+    QDir().mkpath(QFileInfo(logFilePath).path()); // Ensure directory exists
 
-    QProcess process;
-    process.setStandardOutputFile(logFilePath, QIODevice::Truncate);
-    process.setStandardErrorFile(logFilePath, QIODevice::Append);
-    process.start(pythonExe, QStringList() << file_path);
-    if (!process.waitForStarted()) {
-        qWarning() << "Failed to start Python process!";
+    // Clear previous log content
+    QFile logFile(logFilePath);
+    if (logFile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        logFile.close();
+    }
+
+    pythonFsmProcess->setStandardOutputFile(logFilePath, QIODevice::Append); // Append for multiple runs in one session
+    pythonFsmProcess->setStandardErrorFile(logFilePath, QIODevice::Append);
+
+    qInfo() << "[MainWindow] Starting Python FSM server process:" << pythonExe << pythonFilePath;
+
+    pythonFsmProcess->start(pythonExe, QStringList() << pythonFilePath);
+    if (!pythonFsmProcess->waitForStarted(5000)) { // 5 sec
+        qWarning() << "[MainWindow] Failed to start Python process!";
+        qWarning() << "[MainWindow] Python Process Error:" << pythonFsmProcess->errorString();
+        qWarning() << "[MainWindow] Stderr:" << pythonFsmProcess->readAllStandardError();
+        qWarning() << "[MainWindow] Stdout:" << pythonFsmProcess->readAllStandardOutput();
+        // Show error to user
         return;
     }
 
-    // --- Wait briefly for the server to start ---
-    QThread::sleep(2);
+    qInfo() << "[MainWindow] Python FSM process started successfully.";
 
-    // --- Connect the C++ client to the Python FSM server ---
-    FsmClient* client = new FsmClient(this);
-    connect(client, &FsmClient::connected, this, []() {
-        qInfo() << "[MainWindow] Connected to FSM server!";
+    // --- 4. Connect C++ client to the interpret ---
+    QTimer::singleShot(2000, this, [this]() { // QTimer means non-blocking delay
+        qInfo() << "[MainWindow] Attempting to connect client to FSM server...";
+        fsmClient->connectToServer("localhost", 65432);
     });
-    connect(client, &FsmClient::messageReceived, this, [](const QJsonObject& msg) {
-        qInfo() << "[MainWindow] Message from FSM:" << msg;
-        // here update the UI
-    });
-    connect(client, &FsmClient::fsmError, this, [](const QString& err) {
-        qWarning() << "[MainWindow] FSM Client error:" << err;
-    });
-
-    client->connectToServer("localhost", 65432);
 
     // process.waitForFinished(-1); // Wait until finished
     // qDebug() << "Python script finished. Output written to:" << logFilePath;

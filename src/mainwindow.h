@@ -3,7 +3,10 @@
 
 #include <QMainWindow>
 #include <QtNodes/BasicGraphicsScene>
+#include <QProcess>
+#include <QTimer>
 #include "DynamicPortsModel.hpp"
+#include "client.hpp"
 
 
 QT_BEGIN_NAMESPACE
@@ -39,6 +42,27 @@ private slots:
 
     void on_pushButton_setStartState_clicked();
 
+
+    // Slots for FSM Client
+    void onFsmClientConnected();
+
+    void onFsmClientDisconnected();
+
+    void onFsmClientMessageReceived(const QJsonObject& msg);
+
+    void onFsmClientError(const QString& err);
+
+    // Slots for Python Process
+    void onPythonProcessFinished(int exitCode, QProcess::ExitStatus exitStatus);
+
+    void onPythonProcessError(QProcess::ProcessError error);
+
+    void onPythonProcessStateChanged(QProcess::ProcessState newState);
+
+    void onPythonReadyReadStdOut();
+
+    void onPythonReadyReadStdErr();
+
 private:
     Ui::MainWindow *ui;
     void initNodeCanvas();
@@ -48,5 +72,12 @@ private:
 
     NodeId lastSelectedNode;
     ConnectionId lastSelectedConnId;
+
+    // Added client and interpret as member variables
+    // the logic is that this way, the lifetime of the
+    // client and interpret process will be tied to the
+    // main window
+    FsmClient* fsmClient;
+    QProcess* pythonFsmProcess;
 };
 #endif // MAINWINDOW_H
