@@ -88,3 +88,6 @@ CMakeLists.txt.user*
 # Doxygen
 /doc/html/
 /doc/latex/
+
+
+*.zip
