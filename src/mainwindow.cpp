@@ -535,6 +535,8 @@ void MainWindow::on_button_addState_clicked()
     graphModel->setNodeData(id, NodeRole::Position, QPointF(0, 0));
     graphModel->setNodeData(id, NodeRole::OutPortCount, 1);
     graphModel->setNodeData(id, NodeRole::InPortCount, 1);
+
+    graphModel->forceNodeUiUpdate(id);
 }
 
 void MainWindow::on_textEdit_actionCode_textChanged()

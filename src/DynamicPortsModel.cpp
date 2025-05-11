@@ -49,6 +49,14 @@ std::unordered_set<ConnectionId> DynamicPortsModel::allConnectionIds(NodeId cons
     return result;
 }
 
+void DynamicPortsModel::forceNodeUiUpdate(NodeId const id)
+{
+   // This seems to be useless but without it the node widths are all messed up
+   // and I have no idea why...
+   Q_EMIT nodeUpdated(id);
+   _nodeGeometryData[id].size.setWidth(290);
+}
+
 std::unordered_set<ConnectionId> DynamicPortsModel::connections(NodeId nodeId,
                                                                 PortType portType,
                                                                 PortIndex portIndex) const

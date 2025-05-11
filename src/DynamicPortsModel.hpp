@@ -225,6 +225,8 @@ public:
      */
     NodeId addNode(QString const nodeType = QString()) override;
 
+    void forceNodeUiUpdate(NodeId const id);
+
     /**
      * @brief Checks if a connection is possible (no duplicate or reverse).
      * @param connectionId The connection ID.
