@@ -91,7 +91,7 @@ void DynamicPortsModel::addConnection(ConnectionId const connectionId)
     _connectivity.insert(connectionId);
 
     // Add a default transition condition code (just a comment)
-    _connectionCodes[connectionId] = "pass";
+    _connectionCodes[connectionId] = "";
 
     Q_EMIT connectionCreated(connectionId);
 }
