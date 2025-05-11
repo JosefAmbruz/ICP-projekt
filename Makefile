@@ -7,7 +7,9 @@ SRC_FILES = src/*.cpp src/*.hpp src/*.h src/CMakeLists.txt \
 			src/interpret/fsm_core/* \
 			src/PortAddRemoveWidget.* \
 			src/DynamicPortsModel.* \
-			README.md Doxyfile
+			README.md Doxyfile Makefile \
+			doc/\
+			examples/
 
 # Default target
 all: $(BUILD_DIR)/Makefile
@@ -21,6 +23,11 @@ $(BUILD_DIR)/Makefile:
 # Clean build files
 clean:
 	rm -rf $(BUILD_DIR)
+	rm -rf doc/*
+	rm -f xambruj00-xkovarj00-xcapikm00.zip
 
 pack:
 	zip -r xambruj00-xkovarj00-xcapikm00.zip $(SRC_FILES)
+
+doxygen:
+	doxygen Doxyfile

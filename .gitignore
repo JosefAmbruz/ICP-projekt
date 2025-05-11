@@ -86,5 +86,5 @@ CMakeLists.txt.user*
 /src/build/
 
 # Doxygen
-/html/
-/latex/
+/doc/html/
+/doc/latex/
