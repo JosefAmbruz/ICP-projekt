@@ -52,62 +52,70 @@ A graphical editor and interpreter for designing, simulating, and running finite
 ## Installation
 
 1. **Clone the repository:**
-    ```sh
-    git clone https://github.com/JosefAmbruz/ICP-projekt.git
-    cd ICP-projekt
-    ```
+
+   ```sh
+   git clone https://github.com/JosefAmbruz/ICP-projekt.git
+   cd ICP-projekt
+   ```
 
 2. **Install dependencies:**
-    - Make sure Qt and Python 3 are installed and available in your PATH.
+   - Make sure Qt and Python 3 are installed and available in your PATH.
 
 ---
 
 ## Building the Project
 
 1. **Create a build directory:**
-    ```sh
-    mkdir src/build
-    cd src/build
-    ```
+
+   ```sh
+   mkdir src/build
+   cd src/build
+   ```
 
 2. **Configure the project with CMake:**
-    ```sh
-    cmake ..
-    ```
+
+   ```sh
+   cmake ..
+   ```
 
 3. **Build:**
-    ```sh
-    make
-    ```
+
+   ```sh
+   make
+   ```
 
 4. **(Optional) Generate Doxygen documentation:**
-    ```sh
-    doxygen Doxyfile
-    ```
+   ```sh
+   doxygen Doxyfile
+   ```
 
 ---
 
 ## Usage
 
 1. **Run the application:**
-    ```sh
-    ./icp
-    ```
+
+   ```sh
+   ./icp
+   ```
 
 2. **Design your FSM:**
-    - Add states and transitions using the graphical editor.
-    - Set actions and conditions for states and transitions.
-    - Configure variables and initial values.
+
+   - Add states and transitions using the graphical editor.
+   - Set actions and conditions for states and transitions.
+   - Configure variables and initial values.
 
 3. **Generate and run the Python FSM:**
-    - Click the **Run** button to generate and execute the Python FSM interpreter.
-    - View logs and FSM output in the application.
+
+   - Click the **Run** button to generate and execute the Python FSM interpreter.
+   - View logs and FSM output in the application.
 
 4. **Connect as a client (optional):**
-    - Use the built-in client or your own TCP client to interact with the running FSM.
+
+   - Use the built-in client or your own TCP client to interact with the running FSM.
 
 5. **Save/Load your FSM project:**
-    - Use the menu options to save or load FSM designs.
+   - Use the menu options to save or load FSM designs.
 
 ---
 
@@ -158,6 +166,14 @@ Contributions are welcome! Please fork the repository and submit a pull request.
 see LICENSE
 
 ---
+
+## References and Code Attribution
+
+- The implementation of
+  `DynamicPortsModel.{cpp, hpp}`, `PortAddRemoveWidget.{cpp, hpp}` is inspired by the _dynamic_ports_ example provided in the repository of the `nodeeditor` library.  
+  🔗Link: https://github.com/paceholder/nodeeditor/tree/master/examples
+
+- **_src/nodeeditor-master_** contains the source file of the `nodeeditor` library. The main reason to include source codes of external library this way is that we adjusted the library source code to fit our needs.
 
 ## Authors
 
