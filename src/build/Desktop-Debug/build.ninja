@@ -154,7 +154,7 @@ build icp: CXX_EXECUTABLE_LINKER__icp_Debug CMakeFiles/icp.dir/icp_autogen/mocs_
   LINK_FLAGS = -Wl,--dependency-file=CMakeFiles/icp.dir/link.d
   LINK_LIBRARIES = -Wl,-rpath,/home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/lib:  lib/libQtNodes.so  /usr/lib/libQt6Network.so.6.9.0  /usr/lib/libQt6Widgets.so.6.9.0  /usr/lib/libQt6OpenGL.so.6.9.0  /usr/lib/libQt6Gui.so.6.9.0  /usr/lib/libGLX.so  /usr/lib/libOpenGL.so  /usr/lib/libQt6Core.so.6.9.0
   OBJECT_DIR = CMakeFiles/icp.dir
-  POST_BUILD = :
+  POST_BUILD = cd /home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug && /usr/bin/cmake -E copy_directory /home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/interpret/fsm_core /home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/interpret/fsm_core
   PRE_LINK = :
   TARGET_FILE = icp
   TARGET_PDB = icp.dbg

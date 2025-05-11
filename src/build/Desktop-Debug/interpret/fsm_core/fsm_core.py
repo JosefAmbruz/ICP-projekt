@@ -294,9 +294,10 @@ class FSM:
                     if self._stop_event.is_set(): break # Check after transition action
 
                     if transition.delay > 0:
-                        logging.info(f"Delaying transition for {transition.delay} seconds...")
+                        logging.info(f"Delaying transition for {transition.delay} miliseconds...")
+                        delay_seconds = transition.delay / 1000.0
                         # Sleep in small chunks to check _stop_event more frequently
-                        end_time = time.time() + transition.delay
+                        end_time = time.time() + delay_seconds
                         while time.time() < end_time and not self._stop_event.is_set():
                             time.sleep(min(0.1, end_time - time.time())) # Sleep for at most 0.1s or remaining time
                         if self._stop_event.is_set():

@@ -2,7 +2,7 @@ from fsm_core import FSM, State, Transition
 import time
 import logging
 
-# --- FSM Name: tralalero ---
+# --- FSM Name: my_fsm ---
 # Description: Description
 
 # --- Define FSM Actions and Conditions ---
@@ -22,7 +22,7 @@ def condition_always_true(variables):
 # --- Main FSM Execution ---
 if __name__ == "__main__":
     # 1. Create the FSM instance
-    tralalero = FSM()
+    my_fsm = FSM()
 
     # 2. Define States
     state_State_1 = State(
@@ -35,7 +35,7 @@ if __name__ == "__main__":
         name="State 2",
         action=action_State_2,
         is_start_state=False,
-        is_finish_state=False
+        is_finish_state=True
     )
 
     # 3. Define Transitions
@@ -49,8 +49,8 @@ if __name__ == "__main__":
     state_State_1.add_transition(tr_State_1_to_State_2_0)
 
     # 5. Add States to FSM
-    tralalero.add_state(state_State_1)
-    tralalero.add_state(state_State_2)
+    my_fsm.add_state(state_State_1)
+    my_fsm.add_state(state_State_2)
 
     # 6. Set Initial Variables
     # No initial variables defined in specification.
@@ -59,20 +59,20 @@ if __name__ == "__main__":
     client_host = 'localhost'
     client_port = 65432 # Default port, change if needed
 
-    print(f"Starting FSM 'tralalero'...")
-    tralalero.connect_to_client(host=client_host, port=client_port)
+    print(f"Starting FSM 'my_fsm'...")
+    my_fsm.connect_to_client(host=client_host, port=client_port)
 
-    if tralalero._client_socket: # Check if connection was successful
+    if my_fsm._client_socket: # Check if connection was successful
         try:
-            tralalero.run()
+            my_fsm.run()
         except KeyboardInterrupt:
             print("\nFSM execution interrupted by user (Ctrl+C).")
-            tralalero.stop()
+            my_fsm.stop()
         except Exception as e:
             logging.error(f"An unexpected error occurred during FSM execution: {e}", exc_info=True)
-            tralalero.stop()
+            my_fsm.stop()
         finally:
-            tralalero.stop() # Ensure stop is called
+            my_fsm.stop() # Ensure stop is called
             print("FSM runner script finished.")
     else:
         print("FSM did not connect to a client. Exiting.")
