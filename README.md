@@ -58,8 +58,8 @@ A graphical editor and interpreter for designing, simulating, and running finite
 
 1. **Create a build directory:**
     ```sh
-    mkdir build
-    cd build
+    mkdir src/build
+    cd src/build
     ```
 
 2. **Configure the project with CMake:**
