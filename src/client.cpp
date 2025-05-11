@@ -6,9 +6,9 @@
  * This file contains the implementation of the FsmClient class, which provides functionality
  * to connect to an FSM server, send messages, and handle incoming messages. The communication
  * is based on JSON messages sent over a QTcpSocket.
- * 
- * @author Josef
- * @date 2023
+ *
+ * @author Josef Ambruz
+ * @date 2025-5-11
  */
 
  /**
