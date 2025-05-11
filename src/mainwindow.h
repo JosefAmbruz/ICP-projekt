@@ -43,6 +43,7 @@ private slots:
 
     void on_pushButton_setStartState_clicked();
 
+    void on_lineEdit_fsmName_textChanged(const QString &arg1);
 
     // Slots for FSM Client
     void onFsmClientConnected();

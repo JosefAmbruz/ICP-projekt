@@ -181,6 +181,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(nodeScene, &BasicGraphicsScene::nodeClicked, this, &MainWindow::onNodeClicked);
     connect(nodeScene, &BasicGraphicsScene::selectionChanged, this, &MainWindow::onNodeSelectionChanged);
     connect(nodeScene, &BasicGraphicsScene::connectionClicked, this, & MainWindow::onConnectionClicked);
+    connect(ui->actionSave_to_file, &QAction::triggered, this, &MainWindow::onSaveToFileClicked);
 
     // --- Connect FsmClient signals ---
     connect(fsmClient, &FsmClient::connected, this, &MainWindow::onFsmClientConnected);
@@ -441,21 +442,19 @@ void MainWindow::on_button_Run_clicked()
     // here update UI to maybe reflect "not running"
 
     // --- 1. Get Automaton Data ---
-    std::unique_ptr<Automaton> automaton(graphModel->ToAutomaton());
-    if (!automaton) {
-        qWarning() << "[MainWindow] Failed to get automaton data from model.";
-        // Show error to user
-        return;
-    }
 
     // --- Variables ---
     // get the texbox contents
     auto variablesTextEdit = ui->textEdit_vars->toPlainText();
     // parse the variable definition textbox contents
     graphModel->variables = parseVariableTextBox(variablesTextEdit);
-    // add the parsed varaible names and their values to the automaton:
 
-    Automaton* automaton = graphModel->ToAutomaton();
+    std::unique_ptr<Automaton> automaton(graphModel->ToAutomaton());
+    if (!automaton) {
+        qWarning() << "[MainWindow] Failed to get automaton data from model.";
+        // Show error to user
+        return;
+    }
 
     // --- 2. Generate Python FSM Code ---
 
@@ -570,5 +569,11 @@ void MainWindow::on_button_Stop_clicked()
         qWarning() << "[MainWindow] Cannot send STOP_FSM: Client not connected.";
         ui->textEdit_logOut->append("CLIENT: Cannot send STOP_FSM - not connected.");
     }
+}
+
+
+void MainWindow::on_lineEdit_fsmName_textChanged(const QString &text)
+{
+    graphModel->SetFsmName(text);
 }
 
