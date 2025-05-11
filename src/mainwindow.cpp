@@ -442,7 +442,7 @@ void MainWindow::on_button_Run_clicked()
     generator.generate(*automaton, pythonFilePath);
 
     // --- 3. Run the generated Python file ---
-    QString pythonExe = "python3"; // this could be configurable
+    QString pythonExe = "python"; // this could be configurable
     QString logFilePath = QDir::currentPath() + "/interpret/output.log";
     QDir().mkpath(QFileInfo(logFilePath).path()); // Ensure directory exists
 
