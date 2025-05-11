@@ -94,6 +94,8 @@ void DynamicPortsModel::addConnection(ConnectionId const connectionId)
 
     // Add a default transition condition code (just a comment)
     _connectionCodes[connectionId] = "";
+    // Add a default delay of 0ms
+    _connectionDelays[connectionId] = 0;
 
     Q_EMIT connectionCreated(connectionId);
 }
@@ -407,7 +409,6 @@ void DynamicPortsModel::load(QJsonObject const &jsonDocument)
 
 Automaton* DynamicPortsModel::ToAutomaton() const
 {
-
     if(_startStateId == 0)
     {
         qWarning() << "Start state not set!";
@@ -438,13 +439,14 @@ Automaton* DynamicPortsModel::ToAutomaton() const
         auto fromNodeName = _nodeNames.find(connId.outNodeId)->second;
         auto toNodeName = _nodeNames.find(connId.inNodeId)->second;
         auto transitionCode = _connectionCodes.find(connId)->second;
+        auto transitionDelay = _connectionDelays.find(connId)->second;
 
         // create a transition isntance
         Transition trans;
         trans.fromState = fromNodeName.toStdString();
         trans.toState = toNodeName.toStdString();
         trans.condition = transitionCode.toStdString();
-        trans.delay = 1000; // TODO
+        trans.delay = transitionDelay;
 
         // add it to the fsm
         fsm->addTransition(trans);

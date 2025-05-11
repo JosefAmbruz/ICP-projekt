@@ -12,6 +12,7 @@ def action_State_1(fsm, variables):
 
 
 def action_State_2(fsm, variables):
+<<<<<<< HEAD
     x = variables.get('x')
     
     x += 1
@@ -25,6 +26,9 @@ def action_State_3(fsm, variables):
     print(x)
     fsm.set_variable('x', x)
     
+=======
+    pass
+>>>>>>> feature/interpret
 
 
 def condition_always_true(fsm, variables):
@@ -49,6 +53,7 @@ if __name__ == "__main__":
         is_start_state=False,
         is_finish_state=False
     )
+<<<<<<< HEAD
     state_State_3 = State(
         name="State 3",
         action=action_State_3,
@@ -63,22 +68,34 @@ if __name__ == "__main__":
         delay=1000.0
     )
     tr_State_1_to_State_2_1 = Transition(
+=======
+
+    # 3. Define Transitions
+    tr_State_1_to_State_2_0 = Transition(
+>>>>>>> feature/interpret
         target_state_name="State 2",
         condition=condition_always_true,
-        delay=1000.0
+        delay=0.0
     )
 
     # 4. Add Transitions to States
+<<<<<<< HEAD
     state_State_2.add_transition(tr_State_2_to_State_3_0)
     state_State_1.add_transition(tr_State_1_to_State_2_1)
+=======
+    state_State_1.add_transition(tr_State_1_to_State_2_0)
+>>>>>>> feature/interpret
 
     # 5. Add States to FSM
     my_fsm.add_state(state_State_1)
     my_fsm.add_state(state_State_2)
+<<<<<<< HEAD
     my_fsm.add_state(state_State_3)
+=======
+>>>>>>> feature/interpret
 
     # 6. Set Initial Variables
-    my_fsm.set_variable("x", 0)
+    # No initial variables defined in specification.
 
     # 7. Connect to client and Run the FSM
     client_host = 'localhost'

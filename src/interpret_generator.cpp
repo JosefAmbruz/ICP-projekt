@@ -167,7 +167,7 @@ void InterpretGenerator::generate(const Automaton& automaton, const QString& out
 
     for (const auto& pair : automaton.getStates()) {
         if (!pair.second.empty()) { // action
-            QString function_name = "action_" + sanitize_python_identifier(pair.first);;
+            QString function_name = "action_" + sanitize_python_identifier(pair.first);
             QString action_code = transform_to_local_vars(QString::fromStdString(pair.second), automaton.getVariables());;
             QStringList lines = QString::fromStdString(pair.second).split('\n');
 
@@ -175,11 +175,16 @@ void InterpretGenerator::generate(const Automaton& automaton, const QString& out
                 function_name = lines.first().mid(6).trimmed(); // Extract function name after %name=
             } else if (!lines.isEmpty() && lines.first().startsWith("# Enter code here:")) {
                 action_code = "pass";
-            } else if (lines.isEmpty()) {
+            } else if (action_code.isEmpty()) {
                 action_code = "pass";
             }
 
             functions[function_name] = action_code;   // function to function body map
+            state_action[QString::fromStdString(pair.first)] = function_name; // state to action name map
+        } else {
+            QString function_name = "action_" + sanitize_python_identifier(pair.first);
+            
+            functions[function_name] = "pass";   // function to function body map
             state_action[QString::fromStdString(pair.first)] = function_name; // state to action name map
         }
     }

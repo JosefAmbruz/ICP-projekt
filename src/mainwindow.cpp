@@ -15,6 +15,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QThread>
+#include <QShortcut>
 
 
 #include <QApplication>
@@ -177,6 +178,11 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     initNodeCanvas();
+    // Set up a shortcut for Ctrl+L to clean the log output text edit
+    QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+L"), this);
+    connect(shortcut, &QShortcut::activated, this, [this]() {
+        ui->textEdit_logOut->setText("");
+    });
 
     connect(nodeScene, &BasicGraphicsScene::nodeClicked, this, &MainWindow::onNodeClicked);
     connect(nodeScene, &BasicGraphicsScene::selectionChanged, this, &MainWindow::onNodeSelectionChanged);
@@ -275,7 +281,7 @@ void MainWindow::onPythonProcessFinished(int exitCode, QProcess::ExitStatus exit
     // If client was connected, it will likely disconnect now or soon
     // Update UI to show FSM is not running
     // TODO: add correct label
-    //ui->label_currentState->setText("Current FSM State: Not Running");
+    // ui->label_currentState->setText("Current FSM State: Not Running");
 }
 
 void MainWindow::onPythonProcessError(QProcess::ProcessError error) {
@@ -287,6 +293,20 @@ void MainWindow::onPythonProcessError(QProcess::ProcessError error) {
 void MainWindow::onPythonProcessStateChanged(QProcess::ProcessState newState) {
     qInfo() << "[MainWindow] Python FSM process state changed to:" << newState;
     // You can update UI based on this, e.g., "Starting...", "Running..."
+    switch (newState) {
+        case QProcess::NotRunning:
+            ui->textEdit_logOut->append("Python FSM process is not running.");
+            break;
+        case QProcess::Starting:
+            ui->textEdit_logOut->append("Python FSM process is starting...");
+            break;
+        case QProcess::Running:
+            ui->textEdit_logOut->append("Python FSM process is running.");
+            break;
+        default:
+            ui->textEdit_logOut->append("Unknown Python FSM process state.");
+            break;
+    }
 }
 
 void MainWindow::onPythonReadyReadStdOut() {
@@ -325,10 +345,13 @@ void MainWindow::onNodeClicked(NodeId const nodeId)
     // Save the node id that was clicked
     lastSelectedNode = nodeId;
 
+    // disable UI for connection settings
+    ui->textEdit_connCond->setEnabled(false);
+    ui->spinBox_transDelayMs->setEnabled(false);
+
     // Enable the code text edit and state name lineedit but disable conn edit
     ui->textEdit_actionCode->setEnabled(true);
     ui->lineEdit_stateName->setEnabled(true);
-    ui->textEdit_connCond->setEnabled(false);
     // enable the button for setting start state
     ui->pushButton_setStartState->setEnabled(true);
     // enable checkbox fgor setting final state
@@ -368,6 +391,7 @@ void MainWindow::onNodeSelectionChanged()
         ui->textEdit_connCond->setEnabled(false);
         ui->pushButton_setStartState->setEnabled(false);
         ui->checkBox_isFinal->setEnabled(false);
+        ui->spinBox_transDelayMs->setEnabled(false);
     }
 }
 
@@ -377,12 +401,15 @@ void MainWindow::onConnectionClicked(ConnectionId const connId)
     // save the conn id
     lastSelectedConnId = connId;
 
+    // enable the textEdit for the connection condition code:
+    ui->textEdit_connCond->setEnabled(true);
+    // enable the spinBox for transition delay
+    ui->spinBox_transDelayMs->setEnabled(true);
+
     // while editing the connection id, disable state name line edit
     ui->lineEdit_stateName->setEnabled(false);
     // disable the textEdit for the code editing
     ui->textEdit_actionCode->setEnabled(false);
-    // enable the textEdit for the connection condition code:
-    ui->textEdit_connCond->setEnabled(true);
     // disable the finalState checkbox and start stateb btn:
     ui->checkBox_isFinal->setEnabled(false);
     ui->pushButton_setStartState->setEnabled(false);
@@ -390,6 +417,10 @@ void MainWindow::onConnectionClicked(ConnectionId const connId)
     // add the current connection code:
     auto connCode = graphModel->GetConnectionCode(connId);
     ui->textEdit_connCond->setText(connCode);
+
+    // update the spinbox for delay ms
+    auto delayMs = graphModel->GetConnectionDelay(connId);
+    ui->spinBox_transDelayMs->setValue(delayMs);
 }
 
 void MainWindow::onSaveToFileClicked()
@@ -456,7 +487,6 @@ void MainWindow::on_button_Run_clicked()
     }
 
     // --- 2. Generate Python FSM Code ---
-
     InterpretGenerator generator;
     QString pythonFilePath = QDir::currentPath() + "/interpret/output.py";
     QDir().mkpath(QFileInfo(pythonFilePath).path()); // Ensure directory exists
@@ -576,3 +606,8 @@ void MainWindow::on_lineEdit_fsmName_textChanged(const QString &text)
     graphModel->SetFsmName(text);
 }
 
+
+void MainWindow::on_spinBox_transDelayMs_valueChanged(int value)
+{
+    graphModel->SetConnectionDelay(lastSelectedConnId, value);
+}
