@@ -531,3 +531,19 @@ void MainWindow::on_pushButton_setStartState_clicked()
 
 }
 
+
+void MainWindow::on_button_Stop_clicked()
+{
+    if (fsmClient && fsmClient->isConnected()) { // Check if client exists and is connected
+        qInfo() << "[MainWindow] Sending STOP_FSM command to Python interpreter.";
+        ui->textEdit_logOut->append("CLIENT -> FSM: Sending STOP_FSM command.");
+        fsmClient->sendStopFsm();
+        // The Python FSM should then shut down, which will likely cause
+        // pythonFsmProcess to finish and the m_fsmClient to disconnect.
+        // The onFsmClientDisconnected and onPythonProcessFinished slots will handle UI updates.
+    } else {
+        qWarning() << "[MainWindow] Cannot send STOP_FSM: Client not connected.";
+        ui->textEdit_logOut->append("CLIENT: Cannot send STOP_FSM - not connected.");
+    }
+}
+

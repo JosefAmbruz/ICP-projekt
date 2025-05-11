@@ -63,6 +63,8 @@ private slots:
 
     void onPythonReadyReadStdErr();
 
+    void on_button_Stop_clicked();
+
 private:
     Ui::MainWindow *ui;
     void initNodeCanvas();

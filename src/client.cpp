@@ -90,7 +90,7 @@ void FsmClient::sendMessage(const QJsonObject &message)
         qWarning() << "[Client] Not all data written to socket. Wrote" << bytesWritten << "of" << data.size();
         // Handle partial writes if necessary, though for small JSON it's less common
     } else {
-        // qInfo() << "[Client -> FSM] Sent:" << message; // Can be verbose
+        qInfo() << "[Client -> FSM] Sent:" << message; // Can be verbose
     }
     m_socket->flush(); // Ensure data is sent immediately
 }
