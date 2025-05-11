@@ -69,6 +69,10 @@ public:
     void SetStartNode(NodeId const nodeId) { _startStateId = nodeId; }
     bool IsStartNode(NodeId const nodeId) { return nodeId == _startStateId; }
 
+    void SetFsmName(QString const name){ _fsmName = name; }
+
+    void ToFile(std::string const filename) const;
+
     bool connectionExists(ConnectionId const connectionId) const override;
 
     Automaton* ToAutomaton() const;
@@ -123,6 +127,8 @@ public:
 
     NodeId newNodeId() override { return _nextNodeId++; }
 
+    std::vector<std::pair<std::string, std::string>> variables;
+
 private:
     std::unordered_set<NodeId> _nodeIds;
     std::unordered_map<NodeId, QString> _nodeNames;
@@ -130,6 +136,8 @@ private:
     std::unordered_map<ConnectionId, QString> _connectionCodes;
     std::unordered_map<NodeId, bool> _nodeFinalStates;
     NodeId _startStateId = 0;
+    QString _fsmName = "my_fsm";
+
 
     std::unordered_set<ConnectionId> _connectivity;
 

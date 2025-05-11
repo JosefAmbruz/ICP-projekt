@@ -130,8 +130,43 @@ void MainWindow::initNodeCanvas()
     // Add the view with the QtNode scene to our UI
     auto* layout = new QVBoxLayout(ui->nodeCanvasContainer);
     layout->setContentsMargins(0, 0, 0, 0);
+    layout->addWidget(createSaveRestoreMenu(*graphModel, nodeScene, *view));
     layout->addWidget(view);
 }
+
+inline std::string trimToStdString(const QString& str) {
+    return str.trimmed().toStdString();
+}
+
+std::vector<std::pair<std::string, std::string>> parseVariableTextBox(const QString& input) {
+    std::vector<std::pair<std::string, std::string>> result;
+    QTextStream stream(const_cast<QString*>(&input));  // QTextStream needs non-const QString
+
+    while (!stream.atEnd()) {
+        QString line = stream.readLine().trimmed();
+        if (line.isEmpty() || !line.contains("="))
+            continue;
+
+        QStringList parts = line.split("=", Qt::KeepEmptyParts);
+        if (parts.size() != 2)
+            continue;  // skip malformed lines
+
+        std::string varName = trimToStdString(parts[0]);
+        std::string value = trimToStdString(parts[1]);
+
+        result.emplace_back(varName, value);
+    }
+
+    return result;
+}
+
+
+/**
+ *    MAIN WINDOW CTOR
+ *  ========================================================================
+ *  ========================================================================
+ */
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -357,37 +392,30 @@ void MainWindow::onConnectionClicked(ConnectionId const connId)
     ui->textEdit_connCond->setText(connCode);
 }
 
+void MainWindow::onSaveToFileClicked()
+{
+    // get the texbox conents
+    auto variablesTextEdit = ui->textEdit_vars->toPlainText();
+    // parse the variable definition textbox contents
+    graphModel->variables = parseVariableTextBox(variablesTextEdit);
+
+    QString filename = QFileDialog::getSaveFileName(nullptr,
+                                                    "Open Fsm File",
+                                                    QDir::homePath(),
+                                                    "Fsm File (*.fsm)");
+
+    if (!filename.isEmpty()) {
+        if (!filename.endsWith("fsm", Qt::CaseInsensitive))
+            filename += ".fsm";
+
+        graphModel->ToFile(filename.toStdString());
+    }
+}
 /**
  *    UI ELEMENTS SINGALS
  *  ========================================================================
  *  ========================================================================
  */
-
-inline std::string trimToStdString(const QString& str) {
-    return str.trimmed().toStdString();
-}
-
-std::vector<std::pair<std::string, std::string>> parseVariableTextBox(const QString& input) {
-    std::vector<std::pair<std::string, std::string>> result;
-    QTextStream stream(const_cast<QString*>(&input));  // QTextStream needs non-const QString
-
-    while (!stream.atEnd()) {
-        QString line = stream.readLine().trimmed();
-        if (line.isEmpty() || !line.contains("="))
-            continue;
-
-        QStringList parts = line.split("=", Qt::KeepEmptyParts);
-        if (parts.size() != 2)
-            continue;  // skip malformed lines
-
-        std::string varName = trimToStdString(parts[0]);
-        std::string value = trimToStdString(parts[1]);
-
-        result.emplace_back(varName, value);
-    }
-
-    return result;
-}
 
 void MainWindow::on_button_Run_clicked()
 {
@@ -424,13 +452,10 @@ void MainWindow::on_button_Run_clicked()
     // get the texbox contents
     auto variablesTextEdit = ui->textEdit_vars->toPlainText();
     // parse the variable definition textbox contents
-    auto variables = parseVariableTextBox(variablesTextEdit);
-
+    graphModel->variables = parseVariableTextBox(variablesTextEdit);
     // add the parsed varaible names and their values to the automaton:
-    for (const auto& [varName, value] : variables)
-    {
-        automaton->addVariable(varName, value);
-    }
+
+    Automaton* automaton = graphModel->ToAutomaton();
 
     // --- 2. Generate Python FSM Code ---
 

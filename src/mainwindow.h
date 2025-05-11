@@ -27,6 +27,7 @@ public slots:
     void onNodeClicked(NodeId const nodeId);
     void onNodeSelectionChanged();
     void onConnectionClicked(ConnectionId connId);
+    void onSaveToFileClicked();
 private slots:
     void on_button_addState_clicked();
 

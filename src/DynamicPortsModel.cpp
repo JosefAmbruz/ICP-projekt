@@ -7,6 +7,8 @@
 #include <QJsonArray>
 
 #include <iterator>
+#include <fstream>
+#include <iostream>
 
 DynamicPortsModel::DynamicPortsModel()
     : _nextNodeId{1}
@@ -375,6 +377,8 @@ void DynamicPortsModel::load(QJsonObject const &jsonDocument)
 {
     QJsonArray nodesJsonArray = jsonDocument["nodes"].toArray();
 
+
+
     for (QJsonValueRef nodeJson : nodesJsonArray) {
         loadNode(nodeJson.toObject());
     }
@@ -409,7 +413,7 @@ Automaton* DynamicPortsModel::ToAutomaton() const
         auto nodeName = _nodeNames.find(id)->second;
         auto isFinal = _nodeFinalStates.find(id)->second;
 
-        fsm->setName("Automaton"); // TODO
+        fsm->setName(_fsmName.toStdString());
         fsm->setDescription("Description"); // TODO
         fsm->addState(nodeName.toStdString(), nodeActionCode.toStdString());
         if(isFinal)
@@ -436,11 +440,74 @@ Automaton* DynamicPortsModel::ToAutomaton() const
         fsm->addTransition(trans);
     }
 
+    for (const auto& [varName, value] : variables)
+    {
+        fsm->addVariable(varName, value);
+    }
+
     // set the Start node
     auto startNodeName = _nodeNames.find(_startStateId)->second;
     fsm->setStartState(startNodeName.toStdString());
 
     return fsm;
+}
+
+
+void DynamicPortsModel::ToFile(std::string const filename) const
+{
+    auto automaton = this->ToAutomaton();
+
+    ofstream out(filename);
+    if (!out.is_open()) {
+        cerr << "Failed to open file: " << filename << endl;
+        return;
+    }
+
+    // AUTOMATON block
+    out << "AUTOMATON " << automaton->getName() << "\n";
+    out << "    DESCRIPTION \"" << automaton->getDescription() << "\"\n";
+    out << "    START " << automaton->getStartName() << "\n";
+
+    // Final states
+    const auto& finals = automaton->getFinalStates();
+    out << "    FINISH [";
+    for (size_t i = 0; i < finals.size(); ++i) {
+        out << finals[i];
+        if (i != finals.size() - 1) out << ", ";
+    }
+    out << "]\n";
+
+    // Variables block
+    out << "    VARS\n";
+    for (const auto& [name, value] : automaton->getVariables()) {
+        out << "        " << name << " = " << value << "\n";
+    }
+    out << "    END\n\n";
+
+    // States
+    for (const auto& [stateName, action] : automaton->getStates()) {
+        out << "STATE " << stateName << "\n";
+        out << "    ACTION\n";
+
+        // Print action line by line (simulate user script with newlines)
+        istringstream stream(action);
+        string line;
+        while (getline(stream, line)) {
+            out << "        " << line << "\n";
+        }
+
+        out << "    END\n\n";
+    }
+
+    // Transitions
+    for (const auto& t : automaton->getTransitions()) {
+        out << "TRANSITION " << t.fromState << " -> " << t.toState << "\n";
+        out << "    CONDITION " << t.condition << "\n";
+        out << "    DELAY " << t.delay << "\n\n";
+    }
+
+    out << "END\n";
+    out.close();
 }
 
 void DynamicPortsModel::addPort(NodeId nodeId, PortType portType, PortIndex portIndex)
