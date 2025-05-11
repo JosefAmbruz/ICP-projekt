@@ -104,6 +104,31 @@ QString to_python_value_literal(const std::string& val_str) {
     return to_python_string_literal(val_str);
 }
 
+QString transform_to_local_vars(const QString& code, const std::unordered_map<std::string, std::string>& variables) {
+    QString result;
+
+    for (const auto& var_pair : variables) {
+        QString var_name = QString::fromStdString(var_pair.first);
+        result += result +  var_name + " = variables.get('" + var_name + "')\n";
+    }
+    result += "\n";
+
+    result += code;
+
+    result += "\n";
+
+    for (const auto& var_pair : variables) {
+        QString var_name = QString::fromStdString(var_pair.first);
+        result += "fsm.set_variable('" + var_name + "', " + var_name + ")\n";
+    }
+
+    //for (const auto& var_pair : variables) {
+    //    QString var_name = QString::fromStdString(var_pair.first);
+    //    result += "variables['" + var_name + "'] = " + var_name + "\n";
+    //}
+    return result;
+}
+
 // Helper to replace variable names in code with variables.get('<name>')
 QString replace_variables_with_get(const QString& code, const std::unordered_map<std::string, std::string>& variables) {
     QString result = code;
@@ -125,7 +150,7 @@ InterpretGenerator::InterpretGenerator(QObject *parent)
 
 void InterpretGenerator::generate(const Automaton& automaton, const QString& output_filename) {
     QDir().mkpath(QFileInfo(output_filename).absolutePath()); // Ensure directory exists
-    
+
     QFile file(output_filename);
 
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -143,7 +168,7 @@ void InterpretGenerator::generate(const Automaton& automaton, const QString& out
     for (const auto& pair : automaton.getStates()) {
         if (!pair.second.empty()) { // action
             QString function_name = "action_" + sanitize_python_identifier(pair.first);;
-            QString action_code = replace_variables_with_get(QString::fromStdString(pair.second), automaton.getVariables());;
+            QString action_code = transform_to_local_vars(QString::fromStdString(pair.second), automaton.getVariables());;
             QStringList lines = QString::fromStdString(pair.second).split('\n');
 
             if (!lines.isEmpty() && lines.first().startsWith("#name=")) {
@@ -183,7 +208,7 @@ void InterpretGenerator::generate(const Automaton& automaton, const QString& out
     outfile << "# --- Define FSM Actions and Conditions ---\n\n";
 
     for (const auto& func : functions) {
-        outfile << "def " << func.first << "(variables):\n";
+        outfile << "def " << func.first << "(fsm, variables):\n";
         for (const auto& line : func.second.split('\n')) {
             outfile << "    " << line << "\n";
         }

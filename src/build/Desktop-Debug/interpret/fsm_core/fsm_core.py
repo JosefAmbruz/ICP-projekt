@@ -235,7 +235,7 @@ class FSM:
                     # and variables change due to client messages
                     with self._variable_lock:
                         vars_copy = self.variables.copy()
-                    self.current_state.action(vars_copy)
+                    self.current_state.action(self, vars_copy)
                     self._send_to_client("STATE_ACTION_EXECUTED", {"state_name": self.current_state.name})
                 except Exception as e:
                     logging.error(f"Error executing action for state {self.current_state.name}: {e}")
@@ -259,7 +259,7 @@ class FSM:
                 
                 can_transit = False
                 try:
-                    can_transit = transition.condition(vars_copy)
+                    can_transit = transition.condition(self, vars_copy)
                 except Exception as e:
                     logging.error(f"Error evaluating condition for transition to {transition.target_state_name} from {self.current_state.name}: {e}")
                     self._send_to_client("FSM_ERROR", {"message": f"Condition error for transition from {self.current_state.name}: {str(e)}"})

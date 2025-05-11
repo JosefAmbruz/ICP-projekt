@@ -7,25 +7,40 @@ import logging
 
 # --- Define FSM Actions and Conditions ---
 
-def action_State_1(variables):
+def action_State_1(fsm, variables):
+    x = variables.get('x')
+    
     print("In State 1")
+    fsm.set_variable('x', x)
+    
 
 
-def action_State_2(variables):
+def action_State_2(fsm, variables):
+    x = variables.get('x')
+    
     print("In State 2")
-    variables.get('x') += 1
+    x += 1
+    print(x)
+    
+    fsm.set_variable('x', x)
+    
 
 
-def action_State_Final(variables):
-    pass
+def action_State_Final(fsm, variables):
+    x = variables.get('x')
+    
+    print("In State Final")
+    print(x)
+    fsm.set_variable('x', x)
+    
 
 
-def condition_always_true(variables):
+def condition_always_true(fsm, variables):
     return True
 
 
-def condition_xeq2(variables):
-    return (variables.get('x')==2)
+def condition_x_gt_2(fsm, variables):
+    return (variables.get('x') > 2)
 
 
 # --- Main FSM Execution ---
@@ -56,7 +71,7 @@ if __name__ == "__main__":
     # 3. Define Transitions
     tr_State_1_to_State_Final_0 = Transition(
         target_state_name="State Final",
-        condition=condition_xeq2,
+        condition=condition_x_gt_2,
         delay=1000.0
     )
     tr_State_2_to_State_1_1 = Transition(
