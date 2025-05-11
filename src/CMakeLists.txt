@@ -38,6 +38,12 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         interpret_generator.h interpret_generator.cpp
 
     )
+    add_custom_command(
+        TARGET icp POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/interpret/fsm_core
+                $<TARGET_FILE_DIR:icp>/interpret/fsm_core
+    )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET icp APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
 #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
@@ -53,6 +59,8 @@ else()
         add_executable(icp
             ${PROJECT_SOURCES}
         )
+
+
     endif()
 endif()
 

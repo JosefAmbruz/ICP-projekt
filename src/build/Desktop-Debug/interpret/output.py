@@ -35,7 +35,7 @@ if __name__ == "__main__":
         name="State 2",
         action=action_State_2,
         is_start_state=False,
-        is_finish_state=False
+        is_finish_state=True
     )
 
     # 3. Define Transitions
