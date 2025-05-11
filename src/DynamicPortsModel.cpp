@@ -14,6 +14,11 @@
  * - Supporting the conversion of the graphical model to an Automaton object for code generation.
  * - Emitting signals for UI updates when the model changes.
  *
+ * Notable mentions:
+ *  - DynamicPortsModel class has been inspired by the example provided in the
+ *    github repository of the nodeeditor library "dynamic_ports"
+ *    link: https://github.com/paceholder/nodeeditor/tree/master/examples
+ * 
  * @author Jakub Kovařík, Josef Ambruz
  * @date 2025-5-11
  */
