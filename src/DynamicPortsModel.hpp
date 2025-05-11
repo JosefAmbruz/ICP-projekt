@@ -82,6 +82,8 @@ public:
 
     NodeId addNode(QString const nodeType = QString()) override;
 
+    void forceNodeUiUpdate(NodeId const id);
+
     /**
    * Connection is possible when graph contains no connectivity data
    * in both directions `Out -> In` and `In -> Out`.
