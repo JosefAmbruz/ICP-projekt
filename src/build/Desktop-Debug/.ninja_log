@@ -194,3 +194,9 @@
 91	6210	1746990589875864506	CMakeFiles/icp.dir/interpret_generator.cpp.o	d1e760a2be2492f
 91	7809	1746990589875186841	CMakeFiles/icp.dir/mainwindow.cpp.o	9c479209611c9cec
 7809	8471	1746990597593089074	icp	9cb5ad07443cf564
+20	119	1746991240157919946	icp_autogen/timestamp	7680f27f41602284
+20	119	1746991240157919946	icp_autogen/mocs_compilation.cpp	7680f27f41602284
+20	119	1746991240157919946	/home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/icp_autogen/timestamp	7680f27f41602284
+20	119	1746991240157919946	/home/josef/Documents/FITVUT/2BIT-letní/ICP/Projekt/ICP-projekt/src/build/Desktop-Debug/icp_autogen/mocs_compilation.cpp	7680f27f41602284
+120	10301	1746991240257918671	CMakeFiles/icp.dir/mainwindow.cpp.o	9c479209611c9cec
+10302	11317	1746991250439788920	icp	9cb5ad07443cf564

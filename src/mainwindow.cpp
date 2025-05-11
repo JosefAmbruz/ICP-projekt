@@ -15,6 +15,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QThread>
+#include <QShortcut>
 
 
 #include <QApplication>
@@ -177,6 +178,11 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     initNodeCanvas();
+    // Set up a shortcut for Ctrl+L to clean the log output text edit
+    QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+L"), this);
+    connect(shortcut, &QShortcut::activated, this, [this]() {
+        ui->textEdit_logOut->setText("");
+    });
 
     connect(nodeScene, &BasicGraphicsScene::nodeClicked, this, &MainWindow::onNodeClicked);
     connect(nodeScene, &BasicGraphicsScene::selectionChanged, this, &MainWindow::onNodeSelectionChanged);
