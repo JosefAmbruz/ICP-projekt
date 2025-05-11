@@ -281,7 +281,7 @@ void MainWindow::onPythonProcessFinished(int exitCode, QProcess::ExitStatus exit
     // If client was connected, it will likely disconnect now or soon
     // Update UI to show FSM is not running
     // TODO: add correct label
-    //ui->label_currentState->setText("Current FSM State: Not Running");
+    // ui->label_currentState->setText("Current FSM State: Not Running");
 }
 
 void MainWindow::onPythonProcessError(QProcess::ProcessError error) {
@@ -293,6 +293,20 @@ void MainWindow::onPythonProcessError(QProcess::ProcessError error) {
 void MainWindow::onPythonProcessStateChanged(QProcess::ProcessState newState) {
     qInfo() << "[MainWindow] Python FSM process state changed to:" << newState;
     // You can update UI based on this, e.g., "Starting...", "Running..."
+    switch (newState) {
+        case QProcess::NotRunning:
+            ui->textEdit_logOut->append("Python FSM process is not running.");
+            break;
+        case QProcess::Starting:
+            ui->textEdit_logOut->append("Python FSM process is starting...");
+            break;
+        case QProcess::Running:
+            ui->textEdit_logOut->append("Python FSM process is running.");
+            break;
+        default:
+            ui->textEdit_logOut->append("Unknown Python FSM process state.");
+            break;
+    }
 }
 
 void MainWindow::onPythonReadyReadStdOut() {
