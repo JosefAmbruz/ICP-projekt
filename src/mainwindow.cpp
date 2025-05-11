@@ -11,12 +11,17 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QVBoxLayout>
+#include <QProcess>
+#include <QFile>
+#include <QTextStream>
+#include <QThread>
 
 
 #include <QApplication>
 #include "DynamicPortsModel.hpp"
 #include "interpret_generator.h"
 #include "spec_parser/automaton-data.hpp"
+#include "client.hpp"
 
 using QtNodes::BasicGraphicsScene;
 using QtNodes::ConnectionStyle;
@@ -231,36 +236,86 @@ void MainWindow::onConnectionClicked(ConnectionId const connId)
  *  ========================================================================
  */
 
+inline std::string trimToStdString(const QString& str) {
+    return str.trimmed().toStdString();
+}
+
+std::vector<std::pair<std::string, std::string>> parseVariableTextBox(const QString& input) {
+    std::vector<std::pair<std::string, std::string>> result;
+    QTextStream stream(const_cast<QString*>(&input));  // QTextStream needs non-const QString
+
+    while (!stream.atEnd()) {
+        QString line = stream.readLine().trimmed();
+        if (line.isEmpty() || !line.contains("="))
+            continue;
+
+        QStringList parts = line.split("=", Qt::KeepEmptyParts);
+        if (parts.size() != 2)
+            continue;  // skip malformed lines
+
+        std::string varName = trimToStdString(parts[0]);
+        std::string value = trimToStdString(parts[1]);
+
+        result.emplace_back(varName, value);
+    }
+
+    return result;
+}
+
 void MainWindow::on_button_Run_clicked()
 {
     Automaton* automaton = graphModel->ToAutomaton();
 
-    // --- test purposes only ---
-    // demonstration of how the generator interacts with the generator
-    // automaton.setName("MyAutomaton");
-    // automaton.setDescription("This is a test automaton.");
+    // get the texbox conents
+    auto variablesTextEdit = ui->textEdit_vars->toPlainText();
+    // parse the variable definition textbox contents
+    auto variables = parseVariableTextBox(variablesTextEdit);
 
-    // automaton.addVariable("x", "0");
-    // automaton.addVariable("y", "0");
-
-    // automaton.addState("State1", "#name=tralalerotralala\nprint('In State 1')\nprint('testing new line')");
-    // automaton.addState("State2", "print('In State 2')");
-    // automaton.addState("State3", "print('In State 3')");
-
-    // automaton.setStartState("State1");
-    // automaton.addFinalState("State3");
-
-    // automaton.addTransition({"State1", "State2", "x > 0", "", 0});
-    // automaton.addTransition({"State2", "State3", "y < 5", "", 0});
-    // automaton.addTransition({"State3", "State1", "x == 0", "", 0});
-    // automaton.addTransition({"State1", "State3", "x < 0", "", 0});
-    // --- end ---
+    // add the parsed varaible names and their values to the automaton:
+    for (const auto& [varName, value] : variables)
+    {
+        automaton->addVariable(varName, value);
+    }
 
     InterpretGenerator generator;
     QString file_path = QDir::currentPath() + "/interpret/output.py";
 
     qDebug() << "File path:" << file_path;
     generator.generate(*automaton, file_path);
+
+    // --- Run the generated Python file and redirect output to log file ---
+    QString pythonExe = "python3";
+    QString logFilePath = QDir::currentPath() + "/interpret/output.log";
+
+    QProcess process;
+    process.setStandardOutputFile(logFilePath, QIODevice::Truncate);
+    process.setStandardErrorFile(logFilePath, QIODevice::Append);
+    process.start(pythonExe, QStringList() << file_path);
+    if (!process.waitForStarted()) {
+        qWarning() << "Failed to start Python process!";
+        return;
+    }
+
+    // --- Wait briefly for the server to start ---
+    QThread::sleep(2);
+
+    // --- Connect the C++ client to the Python FSM server ---
+    FsmClient* client = new FsmClient(this);
+    connect(client, &FsmClient::connected, this, []() {
+        qInfo() << "[MainWindow] Connected to FSM server!";
+    });
+    connect(client, &FsmClient::messageReceived, this, [](const QJsonObject& msg) {
+        qInfo() << "[MainWindow] Message from FSM:" << msg;
+        // here update the UI
+    });
+    connect(client, &FsmClient::fsmError, this, [](const QString& err) {
+        qWarning() << "[MainWindow] FSM Client error:" << err;
+    });
+
+    client->connectToServer("localhost", 65432);
+
+    // process.waitForFinished(-1); // Wait until finished
+    // qDebug() << "Python script finished. Output written to:" << logFilePath;
 }
 
 void MainWindow::on_button_addState_clicked()

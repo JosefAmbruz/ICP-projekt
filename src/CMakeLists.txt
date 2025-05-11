@@ -9,20 +9,22 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Network)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/nodeeditor-master nodeeditor_build)
 
 set(PROJECT_SOURCES
-    main.cpp
-    mainwindow.cpp
-    mainwindow.h
-    mainwindow.ui
-    interpret_generator.cpp
-    interpret_generator.h
-    spec_parser/automaton-data.cpp
-    spec_parser/automaton-data.hpp
+        main.cpp
+        mainwindow.cpp
+        mainwindow.h
+        mainwindow.ui
+        client.cpp
+        client.hpp
+        interpret_generator.cpp
+        interpret_generator.h
+        spec_parser/automaton-data.cpp
+        spec_parser/automaton-data.hpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -35,14 +37,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         controller.h controller.cpp
         interpret_generator.h interpret_generator.cpp
 
-    )
-
-    # Copy the fsm_core directory to the build directory
-    add_custom_command(
-        TARGET icp POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-                ${CMAKE_SOURCE_DIR}/interpret/fsm_core
-                $<TARGET_FILE_DIR:icp>/interpret/fsm_core
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET icp APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -64,6 +58,7 @@ endif()
 
 target_link_libraries(icp PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(icp PRIVATE QtNodes)
+target_link_libraries(icp PRIVATE Qt${QT_VERSION_MAJOR}::Network)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

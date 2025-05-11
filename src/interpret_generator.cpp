@@ -142,19 +142,15 @@ void InterpretGenerator::generate(const Automaton& automaton, const QString& out
 
     for (const auto& pair : automaton.getStates()) {
         if (!pair.second.empty()) { // action
-            QString function_name;
+            QString function_name = "action_" + sanitize_python_identifier(pair.first);;
+            QString action_code = replace_variables_with_get(QString::fromStdString(pair.second), automaton.getVariables());;
             QStringList lines = QString::fromStdString(pair.second).split('\n');
+
             if (!lines.isEmpty() && lines.first().startsWith("#name=")) {
                 function_name = lines.first().mid(6).trimmed(); // Extract function name after %name=
             } else if (!lines.isEmpty() && lines.first().startsWith("# Enter code here:")) {
-                continue;  
-            } 
-            else {
-                function_name = "action_" + sanitize_python_identifier(pair.first);
+                action_code = "pass";
             }
-
-            QString action_code = replace_variables_with_get(QString::fromStdString(pair.second), automaton.getVariables());
-
 
             functions[function_name] = action_code;   // function to function body map
             state_action[QString::fromStdString(pair.first)] = function_name; // state to action name map
@@ -202,12 +198,12 @@ void InterpretGenerator::generate(const Automaton& automaton, const QString& out
     std::unordered_map<string, string> states = automaton.getStates();
 
     for (const auto& state : states) {
-        QString state_name = sanitize_python_identifier(state.first);
-        outfile << "    state_" << state_name << " = State(\n";
+        QString py_state_name = sanitize_python_identifier(state.first);
+        outfile << "    state_" << py_state_name << " = State(\n";
         outfile << "        name=" << to_python_string_literal(state.first) << ",\n";
 
 
-        outfile << "        action=" << state_action[state_name] << ",\n";
+        outfile << "        action=" << state_action[QString::fromStdString(state.first)] << ",\n";
         outfile << "        is_start_state=" << (state.first == automaton.getStartName() ? "True" : "False") << ",\n";
         outfile << "        is_finish_state=" << (automaton.isFinalState(state.first) ? "True" : "False") << "\n";
         outfile << "    )\n";

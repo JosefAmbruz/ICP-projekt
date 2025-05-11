@@ -1,6 +1,9 @@
 # This file is used to ignore files which are generated
 # ----------------------------------------------------------------------------
 
+build
+*.vs
+
 *~
 *.autosave
 *.a
@@ -80,3 +83,4 @@ CMakeLists.txt.user*
 .rcc/
 .uic/
 /build*/
+/src/build/

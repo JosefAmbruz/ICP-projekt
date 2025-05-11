@@ -7,13 +7,20 @@ import logging
 
 # --- Define FSM Actions and Conditions ---
 
-def condition__Enter_a_transition_condition(variables):
-    # Enter a transition condition
-    
+def action_State_1(variables):
+    pass
+
+
+def action_State_2(variables):
+    pass
 
 
 def condition_always_true(variables):
     return True
+
+
+def condition_pass(variables):
+    pass
 
 
 # --- Main FSM Execution ---
@@ -24,13 +31,13 @@ if __name__ == "__main__":
     # 2. Define States
     state_State_1 = State(
         name="State 1",
-        action=,
+        action=action_State_1,
         is_start_state=True,
         is_finish_state=False
     )
     state_State_2 = State(
         name="State 2",
-        action=,
+        action=action_State_2,
         is_start_state=False,
         is_finish_state=False
     )
@@ -38,7 +45,7 @@ if __name__ == "__main__":
     # 3. Define Transitions
     tr_State_1_to_State_2_0 = Transition(
         target_state_name="State 2",
-        condition=condition__Enter_a_transition_condition,
+        condition=condition_pass,
         delay=1000.0
     )
 
