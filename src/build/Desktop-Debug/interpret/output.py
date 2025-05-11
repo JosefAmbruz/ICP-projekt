@@ -19,10 +19,6 @@ def condition_always_true(variables):
     return True
 
 
-def condition_return_True(variables):
-    return True
-
-
 # --- Main FSM Execution ---
 if __name__ == "__main__":
     # 1. Create the FSM instance
@@ -45,7 +41,7 @@ if __name__ == "__main__":
     # 3. Define Transitions
     tr_State_1_to_State_2_0 = Transition(
         target_state_name="State 2",
-        condition=condition_return_True,
+        condition=condition_always_true,
         delay=1000.0
     )
 

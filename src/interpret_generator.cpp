@@ -150,6 +150,8 @@ void InterpretGenerator::generate(const Automaton& automaton, const QString& out
                 function_name = lines.first().mid(6).trimmed(); // Extract function name after %name=
             } else if (!lines.isEmpty() && lines.first().startsWith("# Enter code here:")) {
                 action_code = "pass";
+            } else if (lines.isEmpty()) {
+                action_code = "pass";
             }
 
             functions[function_name] = action_code;   // function to function body map
@@ -161,6 +163,7 @@ void InterpretGenerator::generate(const Automaton& automaton, const QString& out
         if (!transition.condition.empty()) {
             QString function_name = "condition_" + sanitize_python_identifier(transition.condition);
             QString condition_code = replace_variables_with_get(QString::fromStdString(transition.condition), automaton.getVariables());
+            condition_code = "return (" + condition_code + ")";
 
             functions[function_name] = condition_code;
         }
