@@ -20,6 +20,7 @@ class Transition:
             action (callable, optional): A function to execute when this transition is taken.
                                         It takes a dictionary of FSM variables (live).
             delay (float, optional): Time in miliseconds to wait before completing the transition.
+
                                      Defaults to 0.0.
         """
         self.target_state_name = target_state_name
@@ -309,7 +310,7 @@ class FSM:
                     delay_seconds = transition_to_take.delay / 1000.0 # Convert milliseconds to seconds
                     self._current_delay_end_time = time.time() + delay_seconds
                     
-                    logging.info(f"Starting delay for {delay_seconds:.2f}s for transition to {transition_to_take.target_state_name}")
+                    logging.info(f"Starting delay for {delay_seconds:.2f}ms for transition to {transition_to_take.target_state_name}")
                     
                     needs_re_evaluation = False
                     while not self._stop_event.is_set() and time.time() < self._current_delay_end_time:
