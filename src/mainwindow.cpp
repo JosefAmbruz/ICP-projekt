@@ -20,6 +20,7 @@
 
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "qmessagebox.h"
 
 using QtNodes::BasicGraphicsScene;
 using QtNodes::ConnectionStyle;
@@ -173,8 +174,22 @@ MainWindow::MainWindow(QWidget *parent)
     , fsmClient(new FsmClient(this))
     , pythonFsmProcess(new QProcess(this))
 {
+    // qt mandatory call
     ui->setupUi(this);
+
+    // force the variable rows to start from top and not center
+    // for some reason this cannot be set in UI editor...
+    ui->hlayout_variables->layout()->setAlignment(Qt::AlignTop);
+
+    // connect Add Variable button to to onAddWidget
+    QObject::connect(
+        ui->button_AddWidget, &QPushButton::clicked,
+        this, &MainWindow::onAddWidget);
+
+    // Initialize the canvas with the state machine
     initNodeCanvas();
+
+
     // Set up a shortcut for Ctrl+L to clean the log output text edit
     QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+L"), this);
     connect(shortcut, &QShortcut::activated, this, [this]() {
@@ -423,7 +438,7 @@ void MainWindow::onConnectionClicked(ConnectionId const connId)
 void MainWindow::onSaveToFileClicked()
 {
     // get the texbox conents
-    auto variablesTextEdit = ui->textEdit_vars->toPlainText();
+    auto variablesTextEdit = "a";//ui->textEdit_vars->toPlainText();
     // parse the variable definition textbox contents
     graphModel->variables = parseVariableTextBox(variablesTextEdit);
 
@@ -472,7 +487,7 @@ void MainWindow::on_button_Run_clicked()
 
     // --- Variables ---
     // get the texbox contents
-    auto variablesTextEdit = ui->textEdit_vars->toPlainText();
+    auto variablesTextEdit = "";
     // parse the variable definition textbox contents
     graphModel->variables = parseVariableTextBox(variablesTextEdit);
 
@@ -580,7 +595,6 @@ void MainWindow::on_pushButton_setStartState_clicked()
         ui->pushButton_setStartState->setEnabled(false);
         ui->pushButton_setStartState->setText("✅Start State");
     }
-
 }
 
 
@@ -609,4 +623,77 @@ void MainWindow::on_lineEdit_fsmName_textChanged(const QString &text)
 void MainWindow::on_spinBox_transDelayMs_valueChanged(int value)
 {
     graphModel->SetConnectionDelay(lastSelectedConnId, value);
+}
+
+/**
+ *    UI DYNAMIC VARIABLE WIDGET
+ *  ========================================================================
+ *  ========================================================================
+ */
+
+
+void MainWindow::onAddWidget()
+{
+    QString newVarName = ui->lineEdit_newVarName->text();
+    if (newVarName.isEmpty())
+        return;
+
+    if (variables.contains(newVarName))
+    {
+        QMessageBox::warning(this, "Duplicate", "Variable with such name already exists!");
+        return;
+    }
+
+    ui->lineEdit_newVarName->clear();
+
+    QVBoxLayout* allRowsLayout = qobject_cast<QVBoxLayout*>(ui->hlayout_variables->layout());
+    QHBoxLayout* rowLayout = new QHBoxLayout(this);
+
+    auto* label = new QLabel(newVarName, this);
+    auto* lineEdit = new QLineEdit(this);
+    lineEdit->setFixedWidth(120);
+    auto* updateBtn = new QPushButton("✅", this);
+    updateBtn->setFixedWidth(25);
+    auto* removeBtn = new QPushButton("❌", this);
+    removeBtn->setFixedWidth(25);
+
+    rowLayout->addWidget(label);
+    rowLayout->addWidget(lineEdit);
+    rowLayout->addWidget(updateBtn);
+    rowLayout->addWidget(removeBtn);
+    allRowsLayout->insertLayout(0, rowLayout);
+
+    // Store everything in one struct
+    variables[newVarName] = VariableEntry{ rowLayout, label, lineEdit, updateBtn, removeBtn };
+
+    // Update button logic
+    connect(updateBtn, &QPushButton::clicked, this, [this, newVarName, lineEdit]() {
+        onVariableValueChangedByUser(newVarName, lineEdit->text());
+    });
+
+    // Remove button logic
+    connect(removeBtn, &QPushButton::clicked, this, [this, newVarName]() {
+        onRemoveWidget(newVarName);
+    });
+}
+
+void MainWindow::onVariableValueChangedByUser(const QString& variableName, const QString& newValue)
+{
+    qWarning() << "User updated a variable " << variableName << ", new val: " << newValue;
+}
+
+void MainWindow::onRemoveWidget(const QString& varName)
+{
+    if (!variables.contains(varName))
+        return;
+
+    auto entry = variables.take(varName);
+
+    // Remove all widgets in the row
+    while (entry.layout->count()) {
+        QLayoutItem* item = entry.layout->takeAt(0);
+        delete item->widget();
+        delete item;
+    }
+    delete entry.layout;
 }
