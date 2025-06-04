@@ -8,6 +8,8 @@ SRC_FILES = src/*.cpp src/*.hpp src/*.h src/CMakeLists.txt \
 			src/PortAddRemoveWidget.* \
 			src/DynamicPortsModel.* \
 			README.md Doxyfile Makefile \
+			src/nodeeditor-master/* \
+			src/mainwindow.ui \
 			doc/\
 			examples/
 
@@ -31,3 +33,6 @@ pack:
 
 doxygen:
 	doxygen Doxyfile
+
+run:
+	$(MAKE) -C $(BUILD_DIR) run
