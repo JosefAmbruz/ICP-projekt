@@ -14,18 +14,19 @@ class Transition:
 
         Args:
             target_state_name (str): The name of the state this transition leads to.
-            condition (callable, optional): A function that takes a dictionary of FSM variables
-                                           and returns True if the transition can be taken,
-                                           False otherwise. Defaults to always True.
+            condition (callable, optional): A function that takes an FSM instance and a
+                                           dictionary of FSM variables, returning True if
+                                           the transition can be taken. Defaults to always True.
             action (callable, optional): A function to execute when this transition is taken.
-                                        It takes a dictionary of FSM variables.
-            delay (float, optional): Time in seconds to wait before completing the transition.
+                                        It takes a dictionary of FSM variables (live).
+            delay (float, optional): Time in miliseconds to wait before completing the transition.
                                      Defaults to 0.0.
         """
         self.target_state_name = target_state_name
-        self.condition = condition if callable(condition) else lambda variables: True
+        # Condition now expects (fsm_instance, variables_dict)
+        self.condition = condition if callable(condition) else lambda _fsm, _variables: True
         self.action = action
-        self.delay = delay
+        self.delay = delay # Assumed to be in seconds
 
     def __repr__(self):
         return f"<Transition to '{self.target_state_name}' delay={self.delay}s>"
@@ -38,7 +39,7 @@ class State:
         Args:
             name (str): The unique name of the state.
             action (callable, optional): A function to execute upon entering this state.
-                                        It takes a dictionary of FSM variables.
+                                        It takes (fsm_instance, variables_dict_copy).
             is_start_state (bool, optional): True if this is the starting state. Defaults to False.
             is_finish_state (bool, optional): True if this is a finish state. Defaults to False.
         """
@@ -69,6 +70,11 @@ class FSM:
         self._variable_lock = threading.Lock() # To protect access to self.variables
         self._client_handler_thread = None
 
+        # For interruptible delays
+        self._re_evaluate_event = threading.Event()
+        self._current_delay_target_transition = None # Stores the Transition object being delayed
+        self._current_delay_end_time = None          # Stores the end time for the current delay
+
     def add_state(self, state):
         if not isinstance(state, State):
             raise TypeError("state must be an instance of State class")
@@ -87,6 +93,12 @@ class FSM:
         logging.info(f"Variable '{name}' set to '{value}'")
         self._send_to_client("VARIABLE_UPDATE", {"name": name, "value": value})
 
+        # If FSM is in a delay, signal re-evaluation
+        # Check stop_event to avoid signaling if FSM is already stopping
+        if self._current_delay_target_transition and not self._stop_event.is_set():
+            logging.debug(f"Signaling re-evaluation for state {self.current_state.name} due to variable change during delay.")
+            self._re_evaluate_event.set()
+
 
     def get_variable(self, name, default=None):
         with self._variable_lock:
@@ -97,19 +109,16 @@ class FSM:
             try:
                 message = {"type": message_type, "payload": payload or {}}
                 self._client_socket.sendall((json.dumps(message) + "\n").encode('utf-8'))
-                # logging.debug(f"Sent to client: {message}")
             except (socket.error, BrokenPipeError) as e:
                 logging.error(f"Error sending message to client: {e}. Client might have disconnected.")
                 self._handle_disconnection()
 
 
     def _handle_client_messages(self):
-        """Runs in a separate thread to listen for client messages."""
         buffer = ""
         try:
             while not self._stop_event.is_set() and self._client_socket:
                 try:
-                    # Set a timeout so the loop can check _stop_event periodically
                     self._client_socket.settimeout(0.5)
                     data = self._client_socket.recv(1024)
                     if not data:
@@ -119,11 +128,9 @@ class FSM:
                     
                     buffer += data.decode('utf-8')
                     
-                    # Process all complete JSON messages in the buffer
                     while '\n' in buffer:
                         message_str, buffer = buffer.split('\n', 1)
-                        if not message_str.strip(): # Skip empty lines
-                            continue
+                        if not message_str.strip(): continue
                         try:
                             message = json.loads(message_str)
                             logging.info(f"Received from client: {message}")
@@ -131,18 +138,16 @@ class FSM:
                                 var_name = message.get("payload", {}).get("name")
                                 var_value = message.get("payload", {}).get("value")
                                 if var_name is not None:
-                                    self.set_variable(var_name, var_value) # This will acquire lock
+                                    self.set_variable(var_name, var_value)
                             elif message.get("type") == "STOP_FSM":
                                 logging.info("Received STOP_FSM command from client.")
-                                self.stop() # Signal main loop to stop
-                            # Add other message types here if needed
+                                self.stop()
                         except json.JSONDecodeError:
                             logging.warning(f"Invalid JSON received from client: {message_str}")
                         except Exception as e:
                             logging.error(f"Error processing client message: {e}")
-                            
                 except socket.timeout:
-                    continue # Timeout allows checking _stop_event
+                    continue 
                 except socket.error as e:
                     logging.error(f"Socket error in client handler: {e}")
                     self._handle_disconnection()
@@ -156,26 +161,24 @@ class FSM:
     def _handle_disconnection(self):
         if self._client_socket:
             logging.info(f"Handling disconnection from {self._client_address}")
-            self._send_to_client("FSM_ERROR", {"message": "Client disconnected or connection lost."})
-            self.stop() # Stop the FSM if client disconnects
+            # self._send_to_client("FSM_ERROR", {"message": "Client disconnected or connection lost."}) # Might fail if socket is bad
+            self.stop() 
             try:
                 self._client_socket.close()
             except socket.error:
-                pass # Already closed or error
+                pass 
             self._client_socket = None
 
 
     def connect_to_client(self, host='localhost', port=12345):
-        """Connects to the client application."""
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # Allow quick reuse of address
+        server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         try:
             server_socket.bind((host, port))
             server_socket.listen(1)
             logging.info(f"FSM Server listening on {host}:{port}")
             print(f"FSM Server: Waiting for a client connection on {host}:{port}...")
             
-            # Set a timeout for accept() so it doesn't block indefinitely if we need to shut down
             server_socket.settimeout(1.0) 
             while not self._stop_event.is_set():
                 try:
@@ -186,30 +189,27 @@ class FSM:
                     print(f"FSM Server: Client connected from {addr}")
                     self._send_to_client("FSM_CONNECTED", {"message": "Successfully connected to FSM."})
                     
-                    # Start client message handler thread
                     self._client_handler_thread = threading.Thread(target=self._handle_client_messages, daemon=True)
                     self._client_handler_thread.start()
-                    break # Exit accept loop once connected
+                    break 
                 except socket.timeout:
-                    continue # Loop back and check _stop_event
+                    continue 
                 except Exception as e:
                     logging.error(f"Error accepting connection: {e}")
-                    self.stop() # Signal FSM to stop if connection fails badly
+                    self.stop() 
                     break
-        
         except Exception as e:
             logging.error(f"Could not start FSM server: {e}")
-            self.stop() # Signal FSM to stop
+            self.stop() 
         finally:
-            server_socket.close() # Close the listening server socket
+            server_socket.close() 
 
         if not self._client_socket and not self._stop_event.is_set():
             logging.error("Failed to connect to any client. FSM cannot run.")
-            self.stop() # Ensure FSM stops if no client connects
+            self.stop()
 
 
     def run(self):
-        """Runs the FSM interpreter."""
         if not self.start_state_name:
             logging.error("No start state defined for the FSM.")
             self._send_to_client("FSM_ERROR", {"message": "No start state defined."})
@@ -224,132 +224,182 @@ class FSM:
         logging.info(f"FSM starting at state: {self.current_state.name}")
         self._send_to_client("FSM_STARTED", {"start_state": self.current_state.name})
 
+        # Outer FSM loop: continues as long as FSM is not stopped and has a current state
         while not self._stop_event.is_set() and self.current_state:
+            logging.info(f"--- Processing state: {self.current_state.name} ---")
             self._send_to_client("CURRENT_STATE", {"name": self.current_state.name, "is_finish": self.current_state.is_finish_state})
-            logging.info(f"Current state: {self.current_state.name}")
 
             if self.current_state.action:
                 logging.info(f"Executing action for state {self.current_state.name}")
                 try:
-                    # Pass a copy of variables to avoid modification issues if action is slow
-                    # and variables change due to client messages
-                    with self._variable_lock:
-                        vars_copy = self.variables.copy()
-                    self.current_state.action(self, vars_copy)
+                    with self._variable_lock: vars_copy = self.variables.copy()
+                    self.current_state.action(self, vars_copy) # Pass FSM instance and vars copy
                     self._send_to_client("STATE_ACTION_EXECUTED", {"state_name": self.current_state.name})
                 except Exception as e:
                     logging.error(f"Error executing action for state {self.current_state.name}: {e}")
                     self._send_to_client("FSM_ERROR", {"message": f"Action error in state {self.current_state.name}: {str(e)}"})
-                    self.stop() # Critical error, stop FSM
-                    break
+                    self.stop(); break
 
+            if self._stop_event.is_set(): break
 
             if self.current_state.is_finish_state:
                 logging.info(f"Reached finish state: {self.current_state.name}")
                 self._send_to_client("FSM_FINISHED", {"finish_state": self.current_state.name})
                 break
 
-            if self._stop_event.is_set(): break # Check before finding next transition
+            # Inner loop for transition evaluation and execution for the self.current_state.
+            # This loop continues until a state transition occurs, FSM stops, or gets stuck.
+            # It can be re-entered if a delay is interrupted by _re_evaluate_event.
+            while not self._stop_event.is_set():
+                self._re_evaluate_event.clear() # Clear before evaluating transitions for this iteration
 
-            next_transition_found = False
-            for transition in self.current_state.transitions:
-                # Critical section for reading variables for condition check
-                with self._variable_lock:
-                    vars_copy = self.variables.copy()
-                
-                can_transit = False
-                try:
-                    can_transit = transition.condition(self, vars_copy)
-                except Exception as e:
-                    logging.error(f"Error evaluating condition for transition to {transition.target_state_name} from {self.current_state.name}: {e}")
-                    self._send_to_client("FSM_ERROR", {"message": f"Condition error for transition from {self.current_state.name}: {str(e)}"})
-                    self.stop() # Critical error
-                    break # Break from transition loop
-
-                if self._stop_event.is_set(): break # Check after condition evaluation
-                
-                if can_transit:
-                    logging.info(f"Condition met for transition: {self.current_state.name} -> {transition.target_state_name}")
-                    self._send_to_client("TRANSITION_TAKEN", {
-                        "from_state": self.current_state.name,
-                        "to_state": transition.target_state_name,
-                        "delay": transition.delay
-                    })
-
-                    if transition.action:
-                        logging.info(f"Executing action for transition: {self.current_state.name} -> {transition.target_state_name}")
-                        try:
-                            with self._variable_lock: # Action might read/write vars
-                                transition.action(self.variables) # Pass live variables
-                            self._send_to_client("TRANSITION_ACTION_EXECUTED", {
-                                "from_state": self.current_state.name,
-                                "to_state": transition.target_state_name
-                            })
-                        except Exception as e:
-                            logging.error(f"Error executing transition action: {e}")
-                            self._send_to_client("FSM_ERROR", {"message": f"Transition action error: {str(e)}"})
-                            self.stop() # Critical error
-                            break # Break from transition loop
+                # 1. Evaluate transitions to find one to take
+                transition_to_take = None
+                for t in self.current_state.transitions:
+                    with self._variable_lock: vars_copy = self.variables.copy()
+                    can_transit = False
+                    try:
+                        can_transit = t.condition(self, vars_copy) # Pass FSM instance and vars copy
+                    except Exception as e:
+                        logging.error(f"Error evaluating condition for transition to {t.target_state_name} from {self.current_state.name}: {e}")
+                        self._send_to_client("FSM_ERROR", {"message": f"Condition error for transition from {self.current_state.name}: {str(e)}"})
+                        self.stop(); break 
                     
-                    if self._stop_event.is_set(): break # Check after transition action
+                    if self._stop_event.is_set(): break
 
-                    if transition.delay > 0:
-                        logging.info(f"Delaying transition for {transition.delay} miliseconds...")
-                        delay_seconds = transition.delay / 1000.0
-                        # Sleep in small chunks to check _stop_event more frequently
-                        end_time = time.time() + delay_seconds
-                        while time.time() < end_time and not self._stop_event.is_set():
-                            time.sleep(min(0.1, end_time - time.time())) # Sleep for at most 0.1s or remaining time
-                        if self._stop_event.is_set():
-                            logging.info("FSM stop requested during transition delay.")
-                            break # Break from transition loop
+                    if can_transit:
+                        transition_to_take = t
+                        break # Found the first (highest priority) valid transition
+                
+                if self._stop_event.is_set(): break # from this inner transition processing loop
 
-                    if self._stop_event.is_set(): break # Final check before state change
+                if not transition_to_take:
+                    logging.warning(f"FSM stuck in state {self.current_state.name}: No valid transitions.")
+                    self._send_to_client("FSM_STUCK", {"state_name": self.current_state.name})
+                    self.stop(); break # Break from inner transition processing loop, FSM will stop
 
-                    if transition.target_state_name not in self.states:
-                        logging.error(f"Target state '{transition.target_state_name}' not found!")
-                        self._send_to_client("FSM_ERROR", {"message": f"Target state '{transition.target_state_name}' not found."})
-                        self.stop()
-                        break # Break from transition loop
+                # 2. A transition_to_take has been selected.
+                logging.info(f"Selected transition: {self.current_state.name} -> {transition_to_take.target_state_name}")
+                self._send_to_client("TRANSITION_TAKEN", {
+                    "from_state": self.current_state.name,
+                    "to_state": transition_to_take.target_state_name,
+                    "delay": transition_to_take.delay
+                })
 
-                    self.current_state = self.states[transition.target_state_name]
-                    next_transition_found = True
-                    break # Move to the next state iteration
+                if transition_to_take.action:
+                    logging.info(f"Executing action for transition: {self.current_state.name} -> {transition_to_take.target_state_name}")
+                    try:
+                        with self._variable_lock: # Action might read/write live vars
+                            transition_to_take.action(self.variables) 
+                        self._send_to_client("TRANSITION_ACTION_EXECUTED", {
+                            "from_state": self.current_state.name,
+                            "to_state": transition_to_take.target_state_name
+                        })
+                    except Exception as e:
+                        logging.error(f"Error executing transition action: {e}")
+                        self._send_to_client("FSM_ERROR", {"message": f"Transition action error: {str(e)}"})
+                        self.stop(); break # Break from inner transition processing loop
+
+                if self._stop_event.is_set(): break
+
+                # 3. Handle delay for transition_to_take
+                if transition_to_take.delay > 0:
+                    self._current_delay_target_transition = transition_to_take
+                    # transition.delay is in seconds
+                    delay_seconds = transition_to_take.delay / 1000.0 # Convert milliseconds to seconds
+                    self._current_delay_end_time = time.time() + delay_seconds
+                    
+                    logging.info(f"Starting delay for {delay_seconds:.2f}s for transition to {transition_to_take.target_state_name}")
+                    
+                    needs_re_evaluation = False
+                    while not self._stop_event.is_set() and time.time() < self._current_delay_end_time:
+                        remaining_delay = self._current_delay_end_time - time.time()
+                        if remaining_delay <= 0: break # Delay naturally ended
+
+                        wait_duration = min(0.1, remaining_delay) # Check frequently
+                        
+                        # _re_evaluate_event.wait clears the event if it returns True
+                        if self._re_evaluate_event.wait(timeout=wait_duration):
+                            if self._stop_event.is_set(): break # Prioritize stop event
+                            
+                            logging.info(f"Re-evaluation signaled during delay for transition to "
+                                         f"{self._current_delay_target_transition.target_state_name}. Restarting transition search for state {self.current_state.name}.")
+                            needs_re_evaluation = True
+                            break # Exit delay loop to re-evaluate all transitions from current_state
+                    
+                    # Clear current delay tracking information as this delay attempt is over
+                    self._current_delay_target_transition = None
+                    self._current_delay_end_time = None
+
+                    if self._stop_event.is_set(): break # Break from inner transition processing loop
+
+                    if needs_re_evaluation:
+                        # _re_evaluate_event is already cleared by wait().
+                        # Continue to the top of this inner "Transition evaluation..." loop
+                        # to re-scan all transitions from self.current_state.
+                        continue 
+
+                    # If we are here, delay completed naturally (or was very short) without stop or re-evaluation.
+                    # Check if time is up, effectively.
+                    if time.time() < self._current_delay_end_time if self._current_delay_end_time else False: # Defensive check, should mean loop exited for other reason
+                        logging.warning("Delay loop for transition exited prematurely without re-evaluation or stop signal, before time was up. Re-evaluating.")
+                        continue
+
+
+                    logging.info(f"Delay completed for transition to {transition_to_take.target_state_name}.")
+                    # Proceed to change state (handled below this if-block)
+
+                # 4. If delay is zero or completed (and not re-evaluating/stopped), perform the state change.
+                # (Current delay tracking already cleared if delay was active)
+                if transition_to_take.target_state_name not in self.states:
+                    logging.error(f"Target state '{transition_to_take.target_state_name}' not found!")
+                    self._send_to_client("FSM_ERROR", {"message": f"Target state '{transition_to_take.target_state_name}' not found."})
+                    self.stop(); break # Break from inner transition processing loop
+
+                logging.info(f"Completing transition: {self.current_state.name} -> {transition_to_take.target_state_name}")
+                self.current_state = self.states[transition_to_take.target_state_name]
+                # Successfully transitioned, break inner loop to process the new current_state in outer loop
+                break 
             
-            if self._stop_event.is_set(): break # Check after iterating all transitions
+            # End of inner "Transition evaluation..." loop.
+            # If this loop broke due to stop(), the outer loop's stop_event check will catch it.
+            # If it broke due to a state change, the outer loop continues with the new current_state.
 
-            if not next_transition_found and not self.current_state.is_finish_state:
-                logging.warning(f"FSM stuck in state {self.current_state.name}: No valid transitions.")
-                self._send_to_client("FSM_STUCK", {"state_name": self.current_state.name})
-                break # End FSM
-
-        if self._stop_event.is_set():
-            logging.info("FSM run loop terminated by stop event.")
-            self._send_to_client("FSM_STOPPED", {"message": "FSM was stopped."})
+        # FSM execution loop has ended
+        if self._stop_event.is_set() and not self.current_state.is_finish_state : # only send FSM_STOPPED if not already finished
+             # Check if FSM_FINISHED or FSM_STUCK already explains the stop
+            is_stuck = (self.current_state and not self.current_state.is_finish_state and
+                        not any(t.condition(self, self.variables.copy()) for t in self.current_state.transitions))
+            if not is_stuck : # Avoid duplicate FSM_STUCK vs FSM_STOPPED messages if stuck caused stop.
+                logging.info("FSM run loop terminated by stop event.")
+                self._send_to_client("FSM_STOPPED", {"message": "FSM was stopped."})
         
         self._cleanup()
 
     def stop(self):
-        """Signals the FSM to stop its execution and client handling."""
         logging.info("Stop requested for FSM.")
         self._stop_event.set()
+        # Also signal re-evaluate to break any current delay wait immediately
+        self._re_evaluate_event.set() 
 
     def _cleanup(self):
         logging.info("FSM cleaning up...")
+        # Clear any pending delay info, FSM is stopping.
+        self._current_delay_target_transition = None
+        self._current_delay_end_time = None
+
         if self._client_socket:
             try:
-                # Inform client FSM is shutting down if not already finished/stuck/error
-                if not self.current_state or not self.current_state.is_finish_state: # Check if FSM ended normally
-                     # Avoid sending if already sent FSM_FINISHED, FSM_STUCK or FSM_ERROR that led to stop
-                    pass # Messages like FSM_STOPPED or FSM_ERROR would have been sent
-                self._client_socket.shutdown(socket.SHUT_RDWR) # Gracefully shutdown
+                # Avoid sending if socket already seems problematic or FSM ended with specific message
+                # self._send_to_client("FSM_SHUTTING_DOWN", {}) # Consider if this is needed
+                self._client_socket.shutdown(socket.SHUT_RDWR) 
                 self._client_socket.close()
             except (socket.error, AttributeError):
-                pass # Socket might already be closed or None
+                pass 
             self._client_socket = None
         
         if self._client_handler_thread and self._client_handler_thread.is_alive():
-            self._client_handler_thread.join(timeout=1.0) # Wait for thread to finish
+            self._client_handler_thread.join(timeout=1.0) 
             if self._client_handler_thread.is_alive():
                 logging.warning("Client handler thread did not terminate gracefully.")
         
