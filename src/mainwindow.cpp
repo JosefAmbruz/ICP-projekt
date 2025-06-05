@@ -223,8 +223,7 @@ MainWindow::~MainWindow()
  *  ========================================================================
  */
 
-// TODO: this part was written with help of LLM and should be taken with grain
-// of salt, it only models the supposed functionality
+
 void MainWindow::onFsmClientConnected() {
     qInfo() << "[MainWindow] Connected to FSM server!";
     // Update UI (e.g., enable "Send Variable" button, change status label)
@@ -239,8 +238,7 @@ void MainWindow::onFsmClientDisconnected() {
 
 void MainWindow::onFsmClientMessageReceived(const QJsonObject& msg) {
     qInfo() << "[MainWindow] Message from FSM:" << msg;
-    // Update your UI based on the message
-    // Example: if msg["type"] == "CURRENT_STATE", update a label with msg["payload"]["name"]
+
     QJsonDocument doc(msg);
     ui->textEdit_logOut->append("FSM -> CLIENT: " + doc.toJson(QJsonDocument::Compact));
 
@@ -260,6 +258,34 @@ void MainWindow::onFsmClientMessageReceived(const QJsonObject& msg) {
             }
         }
     }
+
+    // Variable update
+    if (msg.contains("type") && msg["type"].toString() == "VARIABLE_UPDATE") {
+        if (msg.contains("payload") && msg["payload"].isObject()) {
+            QJsonObject payload = msg["payload"].toObject();
+            if (payload.contains("name") && payload.contains("value")) {
+                QString name = payload["name"].toString();
+
+                QJsonValue val = payload["value"];
+                QString value;
+                if (val.isString()) {
+                    value = val.toString();
+                } else if (val.isDouble()) {
+                    value = QString::number(val.toDouble());
+                } else if (val.isBool()) {
+                    value = val.toBool() ? "true" : "false";
+                } else if (val.isNull()) {
+                    value = "null";
+                } else {
+                    value = QString::fromUtf8(QJsonDocument(QJsonObject{{"unknown_type", val}}).toJson(QJsonDocument::Compact));
+                }
+
+                // Placeholder, change the UI accordingly here:
+                ui->textEdit_logOut->append("Variable " + name + "'s value: " + value);
+            }
+        }
+    }
+
 }
 
 /**

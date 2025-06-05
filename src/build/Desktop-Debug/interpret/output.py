@@ -46,7 +46,7 @@ if __name__ == "__main__":
     tr_State_1_to_State_2_0 = Transition(
         target_state_name="State 2",
         condition=condition_always_true,
-        delay=0.0
+        delay=10.0
     )
 
     # 4. Add Transitions to States
