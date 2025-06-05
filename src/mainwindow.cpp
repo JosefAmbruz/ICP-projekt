@@ -137,28 +137,22 @@ inline std::string trimToStdString(const QString& str) {
     return str.trimmed().toStdString();
 }
 
-std::vector<std::pair<std::string, std::string>> parseVariableTextBox(const QString& input) {
+std::vector<std::pair<std::string, std::string>> MainWindow::getVariableRowsAsVector()
+{
+    // extract the variable names and values from the QMap property
     std::vector<std::pair<std::string, std::string>> result;
-    QTextStream stream(const_cast<QString*>(&input));  // QTextStream needs non-const QString
+    result.reserve(variables.size());
 
-    while (!stream.atEnd()) {
-        QString line = stream.readLine().trimmed();
-        if (line.isEmpty() || !line.contains("="))
-            continue;
+    for (auto it = variables.constBegin(); it != variables.constEnd(); ++it)
+    {
+        const QString& varName = it.key();
+        const QString& varValue = it.value().varValue;
 
-        QStringList parts = line.split("=", Qt::KeepEmptyParts);
-        if (parts.size() != 2)
-            continue;  // skip malformed lines
-
-        std::string varName = trimToStdString(parts[0]);
-        std::string value = trimToStdString(parts[1]);
-
-        result.emplace_back(varName, value);
+        result.emplace_back(varName.toStdString(), varValue.toStdString());
     }
 
     return result;
 }
-
 
 /**
  *    MAIN WINDOW CTOR
@@ -437,10 +431,9 @@ void MainWindow::onConnectionClicked(ConnectionId const connId)
 
 void MainWindow::onSaveToFileClicked()
 {
-    // get the texbox conents
-    auto variablesTextEdit = "a";//ui->textEdit_vars->toPlainText();
+
     // parse the variable definition textbox contents
-    graphModel->variables = parseVariableTextBox(variablesTextEdit);
+    graphModel->variables = getVariableRowsAsVector();
 
     QString filename = QFileDialog::getSaveFileName(nullptr,
                                                     "Open Fsm File",
@@ -486,10 +479,8 @@ void MainWindow::on_button_Run_clicked()
     // --- 1. Get Automaton Data ---
 
     // --- Variables ---
-    // get the texbox contents
-    auto variablesTextEdit = "";
-    // parse the variable definition textbox contents
-    graphModel->variables = parseVariableTextBox(variablesTextEdit);
+
+    graphModel->variables = getVariableRowsAsVector();
 
     std::unique_ptr<Automaton> automaton(graphModel->ToAutomaton());
     if (!automaton) {
@@ -664,7 +655,7 @@ void MainWindow::onAddWidget()
     allRowsLayout->insertLayout(0, rowLayout);
 
     // Store everything in one struct
-    variables[newVarName] = VariableEntry{ rowLayout, label, lineEdit, updateBtn, removeBtn };
+    variables[newVarName] = VariableEntry{ rowLayout, "" };
 
     // Update button logic
     connect(updateBtn, &QPushButton::clicked, this, [this, newVarName, lineEdit]() {
@@ -679,6 +670,8 @@ void MainWindow::onAddWidget()
 
 void MainWindow::onVariableValueChangedByUser(const QString& variableName, const QString& newValue)
 {
+    // update the variable valuei n the QMap
+    variables[variableName].varValue = newValue;
     qWarning() << "User updated a variable " << variableName << ", new val: " << newValue;
 }
 

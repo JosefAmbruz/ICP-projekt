@@ -339,6 +339,19 @@ li.checked::marker { content: &quot;\2612&quot;; }
       </layout>
      </item>
      <item>
+      <widget class="Line" name="line_2">
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
+       <property name="midLineWidth">
+        <number>2</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QLabel" name="label_3">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -355,6 +368,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <layout class="QHBoxLayout" name="horizontalLayout_7">
        <item>
         <widget class="QLineEdit" name="lineEdit_newVarName">
+         <property name="maxLength">
+          <number>9</number>
+         </property>
          <property name="placeholderText">
           <string>Enter a variable name</string>
          </property>

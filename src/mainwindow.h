@@ -58,10 +58,7 @@ QT_END_NAMESPACE
 
 struct VariableEntry {
     QHBoxLayout* layout;
-    QLabel* nameLabel;
-    QLineEdit* valueEdit;
-    QPushButton* updateButton;
-    QPushButton* removeButton;
+    QString varValue;
 };
 
 
@@ -227,6 +224,8 @@ private slots:
 private:
     void onVariableValueChangedByUser(const QString& varName, const QString& value);
     QMap<QString, VariableEntry> variables;
+    std::vector<std::pair<std::string, std::string>> getVariableRowsAsVector();
+
     Ui::MainWindow *ui;                      ///< The UI object.
     void initNodeCanvas();                   ///< Initializes the node canvas.
     void initializeModel();                  ///< Initializes the FSM model.
