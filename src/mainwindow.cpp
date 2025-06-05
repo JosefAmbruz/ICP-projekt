@@ -699,8 +699,21 @@ void MainWindow::onVariableValueChangedByUser(const QString& variableName, const
     // update the variable value n the QMap
     variables[variableName].varValue = newValue;
 
-    // TODO poslat signal do ?
-    fsmClient->sendSetVariable(variableName, QString::number( newValue.toInt() ));
+    QString type = "INT";
+
+     if (type == "INT") {
+        bool ok = false;
+        int intValue = newValue.toInt(&ok);
+        if (ok)
+            fsmClient->sendSetVariable(variableName, intValue);
+        else
+            qWarning() << "Invalid int value for variable" << variableName << ":" << newValue;
+    } else if (type == "STRING") {
+        fsmClient->sendSetVariable(variableName, QJsonValue(newValue));
+    } else {
+        // fallback: send as string
+        fsmClient->sendSetVariable(variableName, QJsonValue(newValue));
+    }
 
     qWarning() << "User updated a variable " << variableName << ", new val: " << newValue;
 }
