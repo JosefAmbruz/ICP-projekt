@@ -44,6 +44,8 @@
 #include <QApplication>
 #include "DynamicPortsModel.hpp"
 #include "interpret_generator.h"
+#include "qlabel.h"
+#include "qlineedit.h"
 #include "spec_parser/automaton-data.hpp"
 #include "client.hpp"
 
@@ -53,6 +55,12 @@ namespace Ui {
 class MainWindow;
 }
 QT_END_NAMESPACE
+
+struct VariableEntry {
+    QHBoxLayout* layout;
+    QString varValue;
+};
+
 
 /**
  * @class MainWindow
@@ -76,6 +84,10 @@ public:
      */
     ~MainWindow();
 
+    void onAddWidget();
+
+    void onRemoveWidget(const QString& varName);
+
 public slots:
 
     /**
@@ -98,7 +110,6 @@ public slots:
      * @brief Slot called when the "Save to File" action is triggered.
      */
     void onSaveToFileClicked();
-
 private slots:
     /**
      * @brief Slot for the "Add State" button click.
@@ -211,6 +222,10 @@ private slots:
     void on_spinBox_transDelayMs_valueChanged(int arg1);
 
 private:
+    void onVariableValueChangedByUser(const QString& varName, const QString& value);
+    QMap<QString, VariableEntry> variables;
+    std::vector<std::pair<std::string, std::string>> getVariableRowsAsVector();
+
     Ui::MainWindow *ui;                      ///< The UI object.
     void initNodeCanvas();                   ///< Initializes the node canvas.
     void initializeModel();                  ///< Initializes the FSM model.
@@ -226,5 +241,7 @@ private:
     QString automatonName;                   ///< The name of the automaton.
     QString automatonDescription;            ///< The description of the automaton.
 
+    QHash<QPushButton*, QHBoxLayout*> buttonToLayoutMap;
+    QMap<QString, QLineEdit*> variableNameToLineEditMap;
 };
 #endif // MAINWINDOW_H
