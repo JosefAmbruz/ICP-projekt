@@ -39,6 +39,7 @@
 #include <QTextStream>
 #include <QThread>
 #include <QShortcut>
+#include <QRandomGenerator>
 
 
 #include <QApplication>
@@ -221,6 +222,7 @@ private slots:
      * @param arg1 The new value in milliseconds.
      */
     void on_spinBox_transDelayMs_valueChanged(int arg1);
+
 
 private:
     void onVariableValueChangedByUser(const QString& varName, const QString& value);
