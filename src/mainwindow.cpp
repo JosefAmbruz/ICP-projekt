@@ -699,7 +699,11 @@ void MainWindow::onVariableValueChangedByUser(const QString& variableName, const
     // update the variable value n the QMap
     variables[variableName].varValue = newValue;
 
-    QString type = "INT";
+    // Takto nějak si představuju, že by se předával typ
+    // respektive jakmile se klikne na ten checkbox u proměnné,
+    // tak se nastaví hodnota typu podle toho drop menu
+
+    QString type = "INT"; // DOUBLE, STRING, INT
 
      if (type == "INT") {
         bool ok = false;
@@ -708,6 +712,13 @@ void MainWindow::onVariableValueChangedByUser(const QString& variableName, const
             fsmClient->sendSetVariable(variableName, intValue);
         else
             qWarning() << "Invalid int value for variable" << variableName << ":" << newValue;
+    } else if (type == "DOUBLE") {
+        bool ok = false;
+        double doubleValue = newValue.toDouble(&ok);
+        if (ok)
+            fsmClient->sendSetVariable(variableName, doubleValue);
+        else
+            qWarning() << "Invalid double value for variable" << variableName << ":" << newValue; 
     } else if (type == "STRING") {
         fsmClient->sendSetVariable(variableName, QJsonValue(newValue));
     } else {
