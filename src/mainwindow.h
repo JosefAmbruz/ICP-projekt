@@ -58,6 +58,7 @@ QT_END_NAMESPACE
 
 struct VariableEntry {
     QHBoxLayout* layout;
+    QLineEdit* lineEdit;
     QString varValue;
 };
 
@@ -225,6 +226,7 @@ private:
     void onVariableValueChangedByUser(const QString& varName, const QString& value);
     QMap<QString, VariableEntry> variables;
     std::vector<std::pair<std::string, std::string>> getVariableRowsAsVector();
+    void onVariableUpdate(const QString& varName, const QString& value);
 
     Ui::MainWindow *ui;                      ///< The UI object.
     void initNodeCanvas();                   ///< Initializes the node canvas.

@@ -289,8 +289,8 @@ void MainWindow::onFsmClientMessageReceived(const QJsonObject& msg) {
                     value = QString::fromUtf8(QJsonDocument(QJsonObject{{"unknown_type", val}}).toJson(QJsonDocument::Compact));
                 }
 
-                // Placeholder, change the UI accordingly here:
-                ui->textEdit_logOut->append("Variable " + name + "'s value: " + value);
+                // handle the variable change
+                onVariableUpdate(name, value);
             }
         }
     }
@@ -681,7 +681,7 @@ void MainWindow::onAddWidget()
     allRowsLayout->insertLayout(0, rowLayout);
 
     // Store everything in one struct
-    variables[newVarName] = VariableEntry{ rowLayout, "" };
+    variables[newVarName] = VariableEntry{ rowLayout, lineEdit, "" };
 
     // Update button logic
     connect(updateBtn, &QPushButton::clicked, this, [this, newVarName, lineEdit]() {
@@ -696,9 +696,20 @@ void MainWindow::onAddWidget()
 
 void MainWindow::onVariableValueChangedByUser(const QString& variableName, const QString& newValue)
 {
-    // update the variable valuei n the QMap
+    // update the variable value n the QMap
     variables[variableName].varValue = newValue;
+
+    // TODO poslat signal do ?
+    fsmClient->sendSetVariable(variableName, QString::number( newValue.toInt() ));
+
     qWarning() << "User updated a variable " << variableName << ", new val: " << newValue;
+}
+
+void MainWindow::onVariableUpdate(const QString& variableName, const QString& newValue)
+{
+    variables[variableName].varValue = newValue;
+
+    variables[variableName].lineEdit->setText(newValue);
 }
 
 void MainWindow::onRemoveWidget(const QString& varName)
