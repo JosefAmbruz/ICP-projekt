@@ -44,6 +44,7 @@
 #include <QApplication>
 #include "DynamicPortsModel.hpp"
 #include "interpret_generator.h"
+#include "qcombobox.h"
 #include "qlabel.h"
 #include "qlineedit.h"
 #include "spec_parser/automaton-data.hpp"
@@ -59,6 +60,7 @@ QT_END_NAMESPACE
 struct VariableEntry {
     QHBoxLayout* layout;
     QLineEdit* lineEdit;
+    QComboBox* dropDown;
     QString varValue;
 };
 

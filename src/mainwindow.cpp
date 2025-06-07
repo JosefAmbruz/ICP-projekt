@@ -20,6 +20,7 @@
 
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "qcombobox.h"
 #include "qmessagebox.h"
 
 using QtNodes::BasicGraphicsScene;
@@ -663,25 +664,33 @@ void MainWindow::onAddWidget()
 
     ui->lineEdit_newVarName->clear();
 
-    QVBoxLayout* allRowsLayout = qobject_cast<QVBoxLayout*>(ui->hlayout_variables->layout());
-    QHBoxLayout* rowLayout = new QHBoxLayout(this);
-
+    // Create and setup elements that will be in each row
     auto* label = new QLabel(newVarName, this);
     auto* lineEdit = new QLineEdit(this);
-    lineEdit->setFixedWidth(120);
+    auto* dropDown = new QComboBox(this);
+    dropDown->insertItem(0, "Int");
+    dropDown->insertItem(1, "Double");
+    dropDown->insertItem(2, "String");
+
+    lineEdit->setFixedWidth(75);
     auto* updateBtn = new QPushButton("✅", this);
     updateBtn->setFixedWidth(25);
     auto* removeBtn = new QPushButton("❌", this);
     removeBtn->setFixedWidth(25);
 
+    // get the existing layout where all the layouts are:
+    QVBoxLayout* allRowsLayout = qobject_cast<QVBoxLayout*>(ui->hlayout_variables->layout());
+    // cretae a new layout for new row
+    QHBoxLayout* rowLayout = new QHBoxLayout(this);
     rowLayout->addWidget(label);
     rowLayout->addWidget(lineEdit);
+    rowLayout->addWidget(dropDown);
     rowLayout->addWidget(updateBtn);
     rowLayout->addWidget(removeBtn);
     allRowsLayout->insertLayout(0, rowLayout);
 
     // Store everything in one struct
-    variables[newVarName] = VariableEntry{ rowLayout, lineEdit, "" };
+    variables[newVarName] = VariableEntry{ rowLayout, lineEdit, dropDown, "" };
 
     // Update button logic
     connect(updateBtn, &QPushButton::clicked, this, [this, newVarName, lineEdit]() {
@@ -699,7 +708,6 @@ void MainWindow::onVariableValueChangedByUser(const QString& variableName, const
     // update the variable value n the QMap
     variables[variableName].varValue = newValue;
 
-    // TODO poslat signal do ?
     fsmClient->sendSetVariable(variableName, QString::number( newValue.toInt() ));
 
     qWarning() << "User updated a variable " << variableName << ", new val: " << newValue;
