@@ -69,7 +69,7 @@ QString to_python_value_literal(const std::string& val_str);
  * @param variables The map of variable names and their default values.
  * @return QString The transformed Python code.
  */
-QString transform_to_local_vars(const QString& code, const std::unordered_map<std::string, std::string>& variables);
+QString transform_to_local_vars(const QString& code, const std::vector<VariableInfo>& variables);
 
 /**
  * @brief Replaces variable names in code with variables.get('<name>').
@@ -78,7 +78,7 @@ QString transform_to_local_vars(const QString& code, const std::unordered_map<st
  * @param variables The map of variable names.
  * @return QString The code with variables replaced by variables.get().
  */
-QString replace_variables_with_get(const QString& code, const std::unordered_map<std::string, std::string>& variables);
+QString replace_variables_with_get(const QString& code, const std::vector<VariableInfo>& variables);
 
 class InterpretGenerator : public QObject
 {

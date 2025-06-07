@@ -14,13 +14,27 @@ struct Transition {
     int delay = 0;
 };
 
+enum class VarDataType
+{
+    Int,
+    Double,
+    String
+};
+
+struct VariableInfo
+{
+    string name;
+    string value;
+    VarDataType type;
+};
+
 class Automaton {
     string name;
     string description;
-    unordered_map<string, string> variables;    // <name, value>
+    vector<VariableInfo> variables;
     string startState;
     vector<string> finalStates;
-    unordered_map<string, string> states;       // <name, action>
+    unordered_map<string, string> states;
     vector<Transition> transitions;
 
 public:
@@ -31,11 +45,10 @@ public:
     string getDescription() const;
 
     // Variables
-    void addVariable(const string& varName, const string& varValue = "");
-    void setVariableValue(const string& varName, const string& newValue);
-    bool hasVariable(const string& varName) const;
-    string getVariableValue(const string& varName) const;
-    unordered_map<string, string> getVariables() const;
+    static string varDataTypeAsString(VarDataType type);
+    static VarDataType varDataTypeFromString(const string& str);
+    void addVariable(const string& varName, const string& varValue, const VarDataType type);
+    vector<VariableInfo> getVariables() const;
 
     // States
     void addState(const string& stateName, const string& action = "");

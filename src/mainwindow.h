@@ -233,13 +233,14 @@ private slots:
 private:
     void onVariableValueChangedByUser(const QString& varName, const QString& value);
     QMap<QString, VariableEntry> variables;
-    std::vector<std::pair<std::string, std::string>> getVariableRowsAsVector();
+    std::vector<VariableInfo> getVariableRowsAsVector();
     void onVariableUpdate(const QString& varName, const QString& value);
+    void addVariableRow(QString const name, QString const value, VarDataType type);
 
     Ui::MainWindow *ui;                      ///< The UI object.
     void initNodeCanvas();                   ///< Initializes the node canvas.
     void initializeModel();                  ///< Initializes the FSM model.
-    void SetupUiByAutomaton(const Automaton& automaton);
+    void updateUiFromGraphModel();
     DynamicPortsModel* graphModel;           ///< The graph model for the node editor.
     QtNodes::BasicGraphicsScene* nodeScene;  ///< The graphics scene for the node editor.
 

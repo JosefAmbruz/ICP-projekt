@@ -199,12 +199,6 @@ public:
     int  GetConnectionDelay(ConnectionId const connId) { return _connectionDelays[connId]; }
 
     /**
-     * @brief Sets the FSM name.
-     * @param name The FSM name.
-     */
-    void SetFsmName(QString const name){ _fsmName = name; }
-
-    /**
      * @brief Saves the model to a file.
      * @param filename The file name.
      */
@@ -214,7 +208,7 @@ public:
      * @brief Load the model from a file.
      * @param filename The file name.
      */
-    void FromFile(std::string const filename, Automaton& automaton);
+    void FromFile(std::string const filename);
 
     /**
      * @brief Checks if a connection exists.
@@ -366,9 +360,10 @@ public:
      */
     NodeId newNodeId() override { return _nextNodeId++; }
     /**
-     * @brief List of variable name/value pairs for the FSM.
+     * @brief List of variable information data (name, value, type)
      */
-    std::vector<std::pair<std::string, std::string>> variables;
+    std::vector<VariableInfo> variables;
+    QString fsmName = "my_fsm";
 
 private:
     std::unordered_set<NodeId> _nodeIds;
@@ -378,7 +373,6 @@ private:
     std::unordered_map<ConnectionId, int> _connectionDelays;
     std::unordered_map<NodeId, bool> _nodeFinalStates;
     NodeId _startStateId = 0;
-    QString _fsmName = "my_fsm";
     void writeNodeData(ofstream& os, NodeId const nodeId) const;
 
     std::unordered_set<ConnectionId> _connectivity;

@@ -445,7 +445,7 @@ Automaton* DynamicPortsModel::ToAutomaton() const
         auto nodeName = _nodeNames.find(id)->second;
         auto isFinal = _nodeFinalStates.find(id)->second;
 
-        fsm->setName(_fsmName.toStdString());
+        fsm->setName(fsmName.toStdString());
         fsm->setDescription("Description"); // TODO
         fsm->addState(nodeName.toStdString(), nodeActionCode.toStdString());
         if(isFinal)
@@ -473,9 +473,9 @@ Automaton* DynamicPortsModel::ToAutomaton() const
         fsm->addTransition(trans);
     }
 
-    for (const auto& [varName, value] : variables)
+    for (const auto& varInfo : variables)
     {
-        fsm->addVariable(varName, value);
+        fsm->addVariable(varInfo.name, varInfo.value, varInfo.type);
     }
 
     // set the Start node
@@ -528,8 +528,10 @@ void DynamicPortsModel::ToFile(std::string const filename) const
 
     // Variables block
     out << "    VARS\n";
-    for (const auto& [name, value] : automaton->getVariables()) {
-        out << "        " << name << " = " << value << "\n";
+    for (const auto& varInfo : automaton->getVariables())
+    {
+        auto type = Automaton::varDataTypeAsString(varInfo.type);
+        out << "        " << type << " " << varInfo.name << " = " << varInfo.value << "\n";
     }
     out << "    END\n\n";
 
@@ -608,7 +610,7 @@ void trimLeadingWhitespace(std::string& str)
     str.erase(str.begin(), std::find_if(str.begin(), str.end(), [](unsigned char ch) { return !std::isspace(ch); }));
 }
 
-void DynamicPortsModel::FromFile(std::string const filename, Automaton& automaton)
+void DynamicPortsModel::FromFile(std::string const filename)
 {
     Reset();
 
@@ -626,6 +628,7 @@ void DynamicPortsModel::FromFile(std::string const filename, Automaton& automato
     }
 
     // 2) Load automaton internal data:
+    Automaton automaton;
     AutomatonParser::FromFile(filename, automaton);
     for(auto& nodeId: _nodeIds)
     {
@@ -653,6 +656,12 @@ void DynamicPortsModel::FromFile(std::string const filename, Automaton& automato
             break;
         }
     }
+
+    for(auto var : automaton.getVariables())
+    {
+        variables.push_back(var);
+    }
+    fsmName = QString::fromStdString(automaton.getName());
 
     // 3) Connect states with transitions
 

@@ -125,9 +125,12 @@ void AutomatonParser::FromFile(std::string const filename, Automaton& automaton)
                 }
                 size_t eq = line.find('=');
                 if (eq != string::npos) {
-                    string name = trim(line.substr(0, eq));
+                    string typeAndName = trim(line.substr(0, eq));
+                    size_t spacePos = typeAndName.find(' ');
+                    string type = trim(typeAndName.substr(0, spacePos));
+                    string name = trim(typeAndName.substr(spacePos + 1));
                     string value = trim(line.substr(eq + 1));
-                    automaton.addVariable(name, value);
+                    automaton.addVariable(name, value, Automaton::varDataTypeFromString(type));
                 } else {
                     cerr << "Malformed VARS line: " << line << endl;
                 }
