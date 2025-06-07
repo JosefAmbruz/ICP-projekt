@@ -394,10 +394,7 @@ void DynamicPortsModel::loadNode(QJsonObject const &nodeJson)
     _nodeIds.insert(restoredNodeId);
 
     setNodeData(restoredNodeId, NodeRole::InPortCount, nodeJson["inPortCount"].toString().toUInt());
-
-    setNodeData(restoredNodeId,
-                NodeRole::OutPortCount,
-                nodeJson["outPortCount"].toString().toUInt());
+    setNodeData(restoredNodeId, NodeRole::OutPortCount,nodeJson["outPortCount"].toString().toUInt());
 
     {
         QJsonObject posJson = nodeJson["position"].toObject();
@@ -488,6 +485,15 @@ Automaton* DynamicPortsModel::ToAutomaton() const
     return fsm;
 }
 
+void DynamicPortsModel::writeNodeData(ofstream& os, NodeId const nodeId) const
+{
+    const auto nodeName = nodeData(nodeId, NodeRole::Caption).value<QString>();
+    const auto pos = nodeData(nodeId, NodeRole::Position).value<QPointF>();
+    const auto inPortCount  = nodeData(nodeId, NodeRole::InPortCount).value<unsigned int>();
+    const auto outPortCount = nodeData(nodeId, NodeRole::OutPortCount).value<unsigned int>();
+
+    os << "#" << nodeName.toStdString() << ";" << pos.x() << ";" << pos.y() << ";" << inPortCount << ";" << outPortCount << "\n";
+}
 
 void DynamicPortsModel::ToFile(std::string const filename) const
 {
@@ -497,6 +503,13 @@ void DynamicPortsModel::ToFile(std::string const filename) const
     if (!out.is_open()) {
         cerr << "Failed to open file: " << filename << endl;
         return;
+    }
+
+    // writes nodes data to the begining of the file in the following format:
+    // #state_name;pos_x;pos_y;out_port_count;in_port_count
+    for(const auto nodeId : _nodeIds)
+    {
+        writeNodeData(out, nodeId);
     }
 
     // AUTOMATON block

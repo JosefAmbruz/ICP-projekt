@@ -371,7 +371,7 @@ private:
     std::unordered_map<NodeId, bool> _nodeFinalStates;
     NodeId _startStateId = 0;
     QString _fsmName = "my_fsm";
-
+    void writeNodeData(ofstream& os, NodeId const nodeId) const;
 
     std::unordered_set<ConnectionId> _connectivity;
 
