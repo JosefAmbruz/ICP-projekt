@@ -195,6 +195,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(nodeScene, &BasicGraphicsScene::selectionChanged, this, &MainWindow::onNodeSelectionChanged);
     connect(nodeScene, &BasicGraphicsScene::connectionClicked, this, & MainWindow::onConnectionClicked);
     connect(ui->actionSave_to_file, &QAction::triggered, this, &MainWindow::onSaveToFileClicked);
+    connect(ui->actionOpen_from_file, &QAction::triggered, this, &MainWindow::onLoadFromFileClicked);
 
     // --- Connect FsmClient signals ---
     connect(fsmClient, &FsmClient::connected, this, &MainWindow::onFsmClientConnected);
@@ -474,6 +475,34 @@ void MainWindow::onSaveToFileClicked()
         graphModel->ToFile(filename.toStdString());
     }
 }
+
+void MainWindow::SetupUiByAutomaton(const Automaton& automaton)
+{
+    // FSM name
+    ui->lineEdit_fsmName->setText( QString::fromStdString(automaton.getName()));
+
+}
+
+void MainWindow::onLoadFromFileClicked()
+{
+    // Open .fsm file via file explorer:
+    QString filename = QFileDialog::getOpenFileName(nullptr, "Open Fsm File", QDir::homePath(),"Fsm File (*.fsm)");
+
+    if (filename.isEmpty())
+        return;
+
+    if (!filename.endsWith("fsm", Qt::CaseInsensitive))
+        filename += ".fsm";
+
+    // 1) load the node scene from the provided file:
+    Automaton automaton;
+    graphModel->FromFile(filename.toStdString(), automaton);
+
+    // 2) setup ui elements with the loaded automaton data
+    SetupUiByAutomaton(automaton);
+}
+
+
 /**
  *    UI ELEMENTS SINGALS
  *  ========================================================================

@@ -24,7 +24,7 @@
  */
 
 #include "DynamicPortsModel.hpp"
-
+#include "spec_parser/automaton-parser.hpp"
 
 DynamicPortsModel::DynamicPortsModel()
     : _nextNodeId{1}
@@ -557,6 +557,159 @@ void DynamicPortsModel::ToFile(std::string const filename) const
 
     out << "END\n";
     out.close();
+}
+
+struct StateInfo {
+    std::string name;
+    int posX;
+    int posY;
+    int inPortCount;
+    int outPortCount;
+};
+
+std::vector<StateInfo> loadStateInfo(const std::string& filename)
+{
+    std::string line;
+    std::ifstream fstream(filename);
+    std::vector<StateInfo> result;
+
+    while(std::getline(fstream, line))
+    {
+        if(line.empty() || line[0] != '#')
+            break;
+
+        line = line.substr(1); // ignore the initial #
+        std::stringstream ss(line);
+        std::string token;
+        StateInfo info;
+
+        std::getline(ss, info.name, ';');
+
+        std::getline(ss, token, ';');
+        info.posX = std::stoi(token);
+
+        std::getline(ss, token, ';');
+        info.posY = std::stoi(token);
+
+        std::getline(ss, token, ';');
+        info.inPortCount = std::stoi(token);
+
+        std::getline(ss, token, ';');
+        info.outPortCount = std::stoi(token);
+
+        result.push_back(info);
+    }
+
+    return result;
+}
+
+void trimLeadingWhitespace(std::string& str)
+{
+    str.erase(str.begin(), std::find_if(str.begin(), str.end(), [](unsigned char ch) { return !std::isspace(ch); }));
+}
+
+void DynamicPortsModel::FromFile(std::string const filename, Automaton& automaton)
+{
+    Reset();
+
+    // 1) Load node positions and port counts:
+    auto statesInfo = loadStateInfo(filename);
+    for(auto& s : statesInfo)
+    {
+        NodeId id = addNode();
+        setNodeData(id, NodeRole::Position, QPointF(s.posX, s.posY));
+        setNodeData(id, NodeRole::InPortCount, s.inPortCount);
+        setNodeData(id, NodeRole::OutPortCount, s.outPortCount);
+        SetNodeName(id, QString::fromStdString(s.name));
+
+        forceNodeUiUpdate(id);
+    }
+
+    // 2) Load automaton internal data:
+    AutomatonParser::FromFile(filename, automaton);
+    for(auto& nodeId: _nodeIds)
+    {
+        std::string code = automaton.getStateAction((_nodeNames.at(nodeId).toStdString()));
+        trimLeadingWhitespace(code);
+        _nodeActionCodes[nodeId] = QString::fromStdString(code);
+    }
+
+    auto finalStateNames = automaton.getFinalStates();
+    for(auto& nodeId: _nodeIds)
+    {
+        auto nodeName = _nodeNames.at(nodeId).toStdString();
+        if(std::find(finalStateNames.begin(), finalStateNames.end(), nodeName) != finalStateNames.end())
+        {
+            _nodeFinalStates[nodeId] = true;
+        }
+    }
+
+    auto startNodeName = automaton.getStartName();
+    for(auto& nodeId: _nodeIds)
+    {
+        if(_nodeNames.at(nodeId).toStdString() == startNodeName)
+        {
+            _startStateId = nodeId;
+            break;
+        }
+    }
+
+    // 3) Connect states with transitions
+
+    // iterate all nodes:
+    for(auto& nodeId : _nodeIds)
+    {
+        // get vector transitions coming out from this node (out ports)
+        auto transitionsFrom = automaton.getTransitionsFrom(_nodeNames.at(nodeId).toStdString());
+
+        // iterate transition coming out of this node and make those connections:
+        uint outPortIdx = 0;
+        for(auto& t : transitionsFrom)
+        {
+            // find the NodeId by name of the node we are connecting to
+            NodeId toStateNodeId = 0;
+            for (const auto& [key, value] : _nodeNames)
+                if (value ==  QString::fromStdString(t.toState) )
+                    toStateNodeId = key;
+
+            // find the first free InPort index of the node we want to make transition to:
+            NodeId inPortIdx = 0;
+            for(;!connectionPossible(ConnectionId{ nodeId, outPortIdx, toStateNodeId, inPortIdx }); inPortIdx++){}
+
+            // make the actual connection between two of the nodes:
+            auto connId = ConnectionId{ nodeId, outPortIdx, toStateNodeId, inPortIdx };
+            addConnection(connId);
+
+            // add action code and delay to connection
+            _connectionCodes[connId] = QString::fromStdString(t.condition);
+            _connectionDelays[connId] = t.delay;
+
+            outPortIdx++;
+        }
+    }
+}
+
+void DynamicPortsModel::Reset()
+{
+    for(auto& nodeId: _nodeIds)
+    {
+        deleteNode(nodeId);
+    }
+
+    _nodeActionCodes.clear();
+    _nodeFinalStates.clear();
+    _nodeGeometryData.clear();
+    _nodeIds.clear();
+    _nodeNames.clear();
+    _nodeActionCodes.clear();
+    _connectionCodes.clear();
+    _connectionDelays.clear();
+    _connectivity.clear();
+    _nodePortCounts.clear();
+    _nodeWidgets.clear();
+
+    _startStateId = 0;
+    _nextNodeId = 1;
 }
 
 void DynamicPortsModel::addPort(NodeId nodeId, PortType portType, PortIndex portIndex)

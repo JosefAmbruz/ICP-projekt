@@ -25,6 +25,8 @@ set(PROJECT_SOURCES
         interpret_generator.h
         spec_parser/automaton-data.cpp
         spec_parser/automaton-data.hpp
+        spec_parser/automaton-parser.cpp
+        spec_parser/automaton-parser.hpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

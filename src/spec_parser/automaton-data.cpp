@@ -1,8 +1,10 @@
 /**
- * @brief Metody pro praci s datami ze specifikace automatu
+ * @brief A class representning an automaton
+ * @author Jakub Kovarik
  */
 
 #include "automaton-data.hpp"
+#include <algorithm>
 
 // Automaton info
 void Automaton::setName(const string& newName) {name = newName;}
@@ -41,11 +43,11 @@ void Automaton::appendToAction(const std::string& stateName, const std::string& 
     states[stateName] += line + "\n";
 }
 
-void Automaton::setStartState(const string& stateName) { // Treba pote skontrolovat, zda stav existuje
+void Automaton::setStartState(const string& stateName) {
     startState = stateName;
 }
 
-void Automaton::addFinalState(const string& stateName) { // Treba pote skontrolovat, zda stav existuje
+void Automaton::addFinalState(const string& stateName) { 
     if (!isFinalState(stateName))
         finalStates.push_back(stateName);
 }

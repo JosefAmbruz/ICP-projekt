@@ -211,6 +211,12 @@ public:
     void ToFile(std::string const filename) const;
 
     /**
+     * @brief Load the model from a file.
+     * @param filename The file name.
+     */
+    void FromFile(std::string const filename, Automaton& automaton);
+
+    /**
      * @brief Checks if a connection exists.
      * @param connectionId The connection ID.
      * @return True if exists, false otherwise.
@@ -222,6 +228,8 @@ public:
      * @return Pointer to the Automaton.
      */
     Automaton* ToAutomaton() const;
+
+    void Reset();
 
     /**
      * @brief Adds a new node to the model.

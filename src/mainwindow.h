@@ -113,6 +113,12 @@ public slots:
      * @brief Slot called when the "Save to File" action is triggered.
      */
     void onSaveToFileClicked();
+
+    /**
+     * @brief Slot called when the "Load from File" action is triggered.
+     */
+    void onLoadFromFileClicked();
+
 private slots:
     /**
      * @brief Slot for the "Add State" button click.
@@ -233,6 +239,7 @@ private:
     Ui::MainWindow *ui;                      ///< The UI object.
     void initNodeCanvas();                   ///< Initializes the node canvas.
     void initializeModel();                  ///< Initializes the FSM model.
+    void SetupUiByAutomaton(const Automaton& automaton);
     DynamicPortsModel* graphModel;           ///< The graph model for the node editor.
     QtNodes::BasicGraphicsScene* nodeScene;  ///< The graphics scene for the node editor.
 

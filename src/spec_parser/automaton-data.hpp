@@ -4,15 +4,13 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
-#include <algorithm>
 
 using namespace std;
 
 struct Transition {
     string fromState;
     string toState;
-    string condition;  // Bool vyraz nad promemennymi
-    string inputEvent; // Pozadovana vstupni udalost TODO!!!
+    string condition;  
     int delay = 0;
 };
 
