@@ -31,9 +31,7 @@ DynamicPortsModel::DynamicPortsModel()
 {}
 
 DynamicPortsModel::~DynamicPortsModel()
-{
-    //
-}
+{}
 
 std::unordered_set<NodeId> DynamicPortsModel::allNodeIds() const
 {
@@ -342,90 +340,6 @@ bool DynamicPortsModel::deleteNode(NodeId const nodeId)
     Q_EMIT nodeDeleted(nodeId);
 
     return true;
-}
-
-QJsonObject DynamicPortsModel::saveNode(NodeId const nodeId) const
-{
-    QJsonObject nodeJson;
-
-    nodeJson["id"] = static_cast<qint64>(nodeId);
-
-    {
-        QPointF const pos = nodeData(nodeId, NodeRole::Position).value<QPointF>();
-
-        QJsonObject posJson;
-        posJson["x"] = pos.x();
-        posJson["y"] = pos.y();
-        nodeJson["position"] = posJson;
-
-        nodeJson["inPortCount"] = QString::number(_nodePortCounts[nodeId].in);
-        nodeJson["outPortCount"] = QString::number(_nodePortCounts[nodeId].out);
-    }
-
-    return nodeJson;
-}
-
-QJsonObject DynamicPortsModel::save() const
-{
-    QJsonObject sceneJson;
-
-    QJsonArray nodesJsonArray;
-    for (auto const nodeId : allNodeIds()) {
-        nodesJsonArray.append(saveNode(nodeId));
-    }
-    sceneJson["nodes"] = nodesJsonArray;
-
-    QJsonArray connJsonArray;
-    for (auto const &cid : _connectivity) {
-        connJsonArray.append(QtNodes::toJson(cid));
-    }
-    sceneJson["connections"] = connJsonArray;
-
-    return sceneJson;
-}
-
-void DynamicPortsModel::loadNode(QJsonObject const &nodeJson)
-{
-    NodeId restoredNodeId = static_cast<NodeId>(nodeJson["id"].toInt());
-
-    _nextNodeId = std::max(_nextNodeId, restoredNodeId + 1);
-
-    // Create new node.
-    _nodeIds.insert(restoredNodeId);
-
-    setNodeData(restoredNodeId, NodeRole::InPortCount, nodeJson["inPortCount"].toString().toUInt());
-    setNodeData(restoredNodeId, NodeRole::OutPortCount,nodeJson["outPortCount"].toString().toUInt());
-
-    {
-        QJsonObject posJson = nodeJson["position"].toObject();
-        QPointF const pos(posJson["x"].toDouble(), posJson["y"].toDouble());
-
-        setNodeData(restoredNodeId, NodeRole::Position, pos);
-    }
-
-    Q_EMIT nodeCreated(restoredNodeId);
-}
-
-void DynamicPortsModel::load(QJsonObject const &jsonDocument)
-{
-    QJsonArray nodesJsonArray = jsonDocument["nodes"].toArray();
-
-
-
-    for (QJsonValueRef nodeJson : nodesJsonArray) {
-        loadNode(nodeJson.toObject());
-    }
-
-    QJsonArray connectionJsonArray = jsonDocument["connections"].toArray();
-
-    for (QJsonValueRef connection : connectionJsonArray) {
-        QJsonObject connJson = connection.toObject();
-
-        ConnectionId connId = QtNodes::fromJson(connJson);
-
-        // Restore the connection
-        addConnection(connId);
-    }
 }
 
 Automaton* DynamicPortsModel::ToAutomaton() const

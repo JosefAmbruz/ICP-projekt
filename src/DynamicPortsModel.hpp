@@ -223,6 +223,9 @@ public:
      */
     Automaton* ToAutomaton() const;
 
+    /**
+     * @brief Reset the model to its initial state
+     */
     void Reset();
 
     /**
@@ -232,6 +235,9 @@ public:
      */
     NodeId addNode(QString const nodeType = QString()) override;
 
+    /**
+     * @brief Force an UI update on particular Node
+     */
     void forceNodeUiUpdate(NodeId const id);
 
     /**
@@ -247,7 +253,7 @@ public:
      */
     void addConnection(ConnectionId const connectionId) override;
 
-/**
+    /**
      * @brief Checks if a node exists.
      * @param nodeId The node ID.
      * @return True if exists, false otherwise.
@@ -310,36 +316,12 @@ public:
      * @return True if successful, false otherwise.
      */
     bool deleteConnection(ConnectionId const connectionId) override;
-
     /**
      * @brief Deletes a node from the model.
      * @param nodeId The node ID.
      * @return True if successful, false otherwise.
      */
     bool deleteNode(NodeId const nodeId) override;
-    /**
-     * @brief Saves a node to a QJsonObject.
-     * @param nodeId The node ID.
-     * @return The QJsonObject representing the node.
-     */
-    QJsonObject saveNode(NodeId const) const override;
-    /**
-     * @brief Saves the entire model to a QJsonObject.
-     * @return The QJsonObject representing the model.
-     */
-    QJsonObject save() const;
-
-
-    /**
-     * @brief Loads a node from a QJsonObject.
-     * @param nodeJson The QJsonObject containing node data.
-     */
-    void loadNode(QJsonObject const &nodeJson) override;
-    /**
-     * @brief Loads the model from a QJsonObject.
-     * @param jsonDocument The QJsonObject containing model data.
-     */
-    void load(QJsonObject const &jsonDocument);
     /**
      * @brief Adds a port to a node.
      * @param nodeId The node ID.

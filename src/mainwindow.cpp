@@ -45,58 +45,6 @@ void MainWindow::initializeModel()
     graphModel->addConnection(ConnectionId{id1, 0, id2, 0});
 }
 
-QMenuBar *createSaveRestoreMenu(DynamicPortsModel &graphModel,
-                                BasicGraphicsScene *scene,
-                                GraphicsView &view)
-{
-    auto menuBar = new QMenuBar();
-    QMenu *menu = menuBar->addMenu("File");
-    auto saveAction = menu->addAction("Save Scene");
-    auto loadAction = menu->addAction("Load Scene");
-
-    QObject::connect(saveAction, &QAction::triggered, scene, [&graphModel] {
-        QString fileName = QFileDialog::getSaveFileName(nullptr,
-                                                        "Open Flow Scene",
-                                                        QDir::homePath(),
-                                                        "Flow Scene Files (*.flow)");
-
-        if (!fileName.isEmpty()) {
-            if (!fileName.endsWith("flow", Qt::CaseInsensitive))
-                fileName += ".flow";
-
-            QFile file(fileName);
-            if (file.open(QIODevice::WriteOnly)) {
-                file.write(QJsonDocument(graphModel.save()).toJson());
-            }
-        }
-    });
-
-    QObject::connect(loadAction, &QAction::triggered, scene, [&graphModel, &view, scene] {
-        QString fileName = QFileDialog::getOpenFileName(nullptr,
-                                                        "Open Flow Scene",
-                                                        QDir::homePath(),
-                                                        "Flow Scene Files (*.flow)");
-        if (!QFileInfo::exists(fileName))
-            return;
-
-        QFile file(fileName);
-
-        if (!file.open(QIODevice::ReadOnly))
-            return;
-
-        scene->clearScene();
-
-        QByteArray const wholeFile = file.readAll();
-
-        graphModel.load(QJsonDocument::fromJson(wholeFile).object());
-
-        view.centerScene();
-    });
-
-    return menuBar;
-}
-
-
 QAction *createNodeAction(DynamicPortsModel &graphModel, GraphicsView &view)
 {
     auto action = new QAction(QStringLiteral("Create Node"), &view);
@@ -124,13 +72,10 @@ void MainWindow::initNodeCanvas()
 
     // Create a View for the scene
     auto* view = new GraphicsView(nodeScene, this);
-    view->setContextMenuPolicy(Qt::ActionsContextMenu);
-    view->insertAction(view->actions().front(), createNodeAction(*graphModel, *view));
 
     // Add the view with the QtNode scene to our UI
     auto* layout = new QVBoxLayout(ui->nodeCanvasContainer);
     layout->setContentsMargins(0, 0, 0, 0);
-    layout->addWidget(createSaveRestoreMenu(*graphModel, nodeScene, *view));
     layout->addWidget(view);
 }
 
@@ -363,8 +308,6 @@ void MainWindow::onFsmClientError(const QString& err) {
     ui->textEdit_logOut->append("CLIENT ERROR: " + err);
     // Update UI
 }
-
-
 
 
 /**
