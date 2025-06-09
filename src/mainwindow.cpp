@@ -197,17 +197,37 @@ void MainWindow::onFsmClientMessageReceived(const QJsonObject& msg) {
     qInfo() << "[MainWindow] Message from FSM:" << msg;
 
     QJsonDocument doc(msg);
-    ui->textEdit_logOut->append("FSM -> CLIENT: " + doc.toJson(QJsonDocument::Compact));
+    //ui->textEdit_logOut->append("FSM -> CLIENT: " + doc.toJson(QJsonDocument::Compact));
 
+    // Connected to FSM
+    if (msg.contains("type") && msg["type"].toString() == "FSM_CONNECTED") {
+        if (msg.contains("payload") && msg["payload"].isObject()) {
+            QJsonObject payload = msg["payload"].toObject();
+            if (payload.contains("message")) {
+                ui->textEdit_logOut->append("FSM: " + payload["message"].toString());
+            }
+        }
+    }
+
+    // Fsm Start
+    if (msg.contains("type") && msg["type"].toString() == "FSM_STARTED") {
+        if (msg.contains("payload") && msg["payload"].isObject()) {
+            QJsonObject payload = msg["payload"].toObject();
+            if (payload.contains("start_state")) {
+                ui->textEdit_logOut->append("FSM: Started");
+            }
+        }
+    }
+
+    // State changed
     if (msg.contains("type") && msg["type"].toString() == "CURRENT_STATE") {
         if (msg.contains("payload") && msg["payload"].isObject()) {
             QJsonObject payload = msg["payload"].toObject();
             if (payload.contains("name")) {
                 QString currentStateName = payload["name"].toString();
-                ui->label_currentState->setText("Current State: " + currentStateName);
+                ui->textEdit_logOut->append("FSM: Current State: " + currentStateName);                            // Logging
+                ui->label_currentState->setText("Current State: " + currentStateName);  // Current State label
 
-                // Example: Highlight the current state node in your QtNodes view
-                // You'll need a mapping from state name to NodeId
                 NodeId currentFsmNodeId = graphModel->findNodeByName(currentStateName);
                 if (currentFsmNodeId != QtNodes::InvalidNodeId) {
 
@@ -215,6 +235,42 @@ void MainWindow::onFsmClientMessageReceived(const QJsonObject& msg) {
             }
         }
     }
+
+    // Transitioning
+    if (msg.contains("type") && msg["type"].toString() == "TRANSITION_TAKEN") {
+        if (msg.contains("payload") && msg["payload"].isObject()) {
+            QJsonObject payload = msg["payload"].toObject();
+            if (payload.contains("delay") && payload.contains("from_state") && payload.contains("to_state")) {
+                QString currentStateName = payload["from_state"].toString();
+                QString nextStateName = payload["to_state"].toString();
+                QString delayMs = QString::number(payload["delay"].toInt());
+                ui->textEdit_logOut->append("FSM: Transitioning: " + currentStateName + " -> " + nextStateName + ", delay: " + delayMs);
+            }
+        }
+    }
+
+    // Fsm stuck
+    if (msg.contains("type") && msg["type"].toString() == "FSM_STUCK") {
+        if (msg.contains("payload") && msg["payload"].isObject()) {
+            QJsonObject payload = msg["payload"].toObject();
+            if (payload.contains("state_name")) {
+                QString currentStateName = payload["state_name"].toString();
+                ui->textEdit_logOut->append("FSM: Stuck on " + currentStateName + " state. No valid transition possible.");
+            }
+        }
+    }
+
+    // Fsm finished
+    if (msg.contains("type") && msg["type"].toString() == "FSM_FINISHED") {
+        if (msg.contains("payload") && msg["payload"].isObject()) {
+            QJsonObject payload = msg["payload"].toObject();
+            if (payload.contains("state_name")) {
+                QString currentStateName = payload["state_name"].toString();
+                ui->textEdit_logOut->append("FSM: Finished, final state is " + currentStateName);
+            }
+        }
+    }
+
 
     // Variable update
     if (msg.contains("type") && msg["type"].toString() == "VARIABLE_UPDATE") {
@@ -236,6 +292,8 @@ void MainWindow::onFsmClientMessageReceived(const QJsonObject& msg) {
                 } else {
                     value = QString::fromUtf8(QJsonDocument(QJsonObject{{"unknown_type", val}}).toJson(QJsonDocument::Compact));
                 }
+
+                ui->textEdit_logOut->append("FSM: Variable " + name + " changed to: " + val.toString());
 
                 // handle the variable change
                 onVariableUpdate(name, value);
