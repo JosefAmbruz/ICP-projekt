@@ -139,6 +139,12 @@ void FsmClient::onDisconnected()
 
 void FsmClient::onErrorOccurred(QAbstractSocket::SocketError socketError)
 {
+     // Only emit fsmError for real errors, not for normal disconnects
+    if (socketError == QAbstractSocket::RemoteHostClosedError) {
+        qInfo() << "[Client] Remote host closed the connection (normal disconnect).";
+        return;
+    }
+
     Q_UNUSED(socketError); // socketError parameter is not directly used here
     qWarning() << "[Client] Socket error:" << m_socket->errorString();
     emit fsmError(m_socket->errorString());

@@ -264,8 +264,8 @@ void MainWindow::onFsmClientMessageReceived(const QJsonObject& msg) {
     if (msg.contains("type") && msg["type"].toString() == "FSM_FINISHED") {
         if (msg.contains("payload") && msg["payload"].isObject()) {
             QJsonObject payload = msg["payload"].toObject();
-            if (payload.contains("state_name")) {
-                QString currentStateName = payload["state_name"].toString();
+            if (payload.contains("finish_state")) {
+                QString currentStateName = payload["finish_state"].toString();
                 ui->textEdit_logOut->append("FSM: Finished, final state is " + currentStateName);
             }
         }
