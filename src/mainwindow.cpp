@@ -20,6 +20,7 @@
 
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "qcombobox.h"
 #include "qmessagebox.h"
 
 using QtNodes::BasicGraphicsScene;
@@ -43,58 +44,6 @@ void MainWindow::initializeModel()
 
     graphModel->addConnection(ConnectionId{id1, 0, id2, 0});
 }
-
-QMenuBar *createSaveRestoreMenu(DynamicPortsModel &graphModel,
-                                BasicGraphicsScene *scene,
-                                GraphicsView &view)
-{
-    auto menuBar = new QMenuBar();
-    QMenu *menu = menuBar->addMenu("File");
-    auto saveAction = menu->addAction("Save Scene");
-    auto loadAction = menu->addAction("Load Scene");
-
-    QObject::connect(saveAction, &QAction::triggered, scene, [&graphModel] {
-        QString fileName = QFileDialog::getSaveFileName(nullptr,
-                                                        "Open Flow Scene",
-                                                        QDir::homePath(),
-                                                        "Flow Scene Files (*.flow)");
-
-        if (!fileName.isEmpty()) {
-            if (!fileName.endsWith("flow", Qt::CaseInsensitive))
-                fileName += ".flow";
-
-            QFile file(fileName);
-            if (file.open(QIODevice::WriteOnly)) {
-                file.write(QJsonDocument(graphModel.save()).toJson());
-            }
-        }
-    });
-
-    QObject::connect(loadAction, &QAction::triggered, scene, [&graphModel, &view, scene] {
-        QString fileName = QFileDialog::getOpenFileName(nullptr,
-                                                        "Open Flow Scene",
-                                                        QDir::homePath(),
-                                                        "Flow Scene Files (*.flow)");
-        if (!QFileInfo::exists(fileName))
-            return;
-
-        QFile file(fileName);
-
-        if (!file.open(QIODevice::ReadOnly))
-            return;
-
-        scene->clearScene();
-
-        QByteArray const wholeFile = file.readAll();
-
-        graphModel.load(QJsonDocument::fromJson(wholeFile).object());
-
-        view.centerScene();
-    });
-
-    return menuBar;
-}
-
 
 QAction *createNodeAction(DynamicPortsModel &graphModel, GraphicsView &view)
 {
@@ -123,13 +72,10 @@ void MainWindow::initNodeCanvas()
 
     // Create a View for the scene
     auto* view = new GraphicsView(nodeScene, this);
-    view->setContextMenuPolicy(Qt::ActionsContextMenu);
-    view->insertAction(view->actions().front(), createNodeAction(*graphModel, *view));
 
     // Add the view with the QtNode scene to our UI
     auto* layout = new QVBoxLayout(ui->nodeCanvasContainer);
     layout->setContentsMargins(0, 0, 0, 0);
-    layout->addWidget(createSaveRestoreMenu(*graphModel, nodeScene, *view));
     layout->addWidget(view);
 }
 
@@ -137,18 +83,19 @@ inline std::string trimToStdString(const QString& str) {
     return str.trimmed().toStdString();
 }
 
-std::vector<std::pair<std::string, std::string>> MainWindow::getVariableRowsAsVector()
+std::vector<VariableInfo> MainWindow::getVariableRowsAsVector()
 {
     // extract the variable names and values from the QMap property
-    std::vector<std::pair<std::string, std::string>> result;
+    std::vector<VariableInfo> result;
     result.reserve(variables.size());
 
     for (auto it = variables.constBegin(); it != variables.constEnd(); ++it)
     {
-        const QString& varName = it.key();
-        const QString& varValue = it.value().varValue;
+        auto varName = it.key().toStdString();
+        auto varValue = it.value().varValue.toStdString();
+        auto varType = Automaton::varDataTypeFromString(it.value().dropDown->currentText().toStdString());
 
-        result.emplace_back(varName.toStdString(), varValue.toStdString());
+        result.emplace_back(VariableInfo{ varName, varValue, varType });
     }
 
     return result;
@@ -194,6 +141,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(nodeScene, &BasicGraphicsScene::selectionChanged, this, &MainWindow::onNodeSelectionChanged);
     connect(nodeScene, &BasicGraphicsScene::connectionClicked, this, & MainWindow::onConnectionClicked);
     connect(ui->actionSave_to_file, &QAction::triggered, this, &MainWindow::onSaveToFileClicked);
+    connect(ui->actionOpen_from_file, &QAction::triggered, this, &MainWindow::onLoadFromFileClicked);
 
     // --- Connect FsmClient signals ---
     connect(fsmClient, &FsmClient::connected, this, &MainWindow::onFsmClientConnected);
@@ -362,8 +310,6 @@ void MainWindow::onFsmClientError(const QString& err) {
 }
 
 
-
-
 /**
  *    NODEEDITOR SIGNALS
  *  ========================================================================
@@ -457,7 +403,6 @@ void MainWindow::onConnectionClicked(ConnectionId const connId)
 
 void MainWindow::onSaveToFileClicked()
 {
-
     // parse the variable definition textbox contents
     graphModel->variables = getVariableRowsAsVector();
 
@@ -466,13 +411,60 @@ void MainWindow::onSaveToFileClicked()
                                                     QDir::homePath(),
                                                     "Fsm File (*.fsm)");
 
-    if (!filename.isEmpty()) {
-        if (!filename.endsWith("fsm", Qt::CaseInsensitive))
-            filename += ".fsm";
+    if (filename.isEmpty())
+        return;
 
-        graphModel->ToFile(filename.toStdString());
+    if (!filename.endsWith("fsm", Qt::CaseInsensitive))
+        filename += ".fsm";
+
+    graphModel->ToFile(filename.toStdString());
+}
+
+void MainWindow::updateUiFromGraphModel()
+{
+    // set FSM name lineEdit
+    ui->lineEdit_fsmName->setText(graphModel->fsmName);
+
+    // clear old variable rows in UI:
+    for(auto& varEntry: variables)
+    {
+        // Remove all widgets in the row
+        while (varEntry.layout->count()) {
+            QLayoutItem* item = varEntry.layout->takeAt(0);
+            delete item->widget();
+            delete item;
+        }
+        delete varEntry.layout;
+    }
+
+    // iterate all loaded variables and add them to ui sidepanel:
+    for(auto& varInfo : graphModel->variables)
+    {
+        auto name = QString::fromStdString(varInfo.name);
+        auto value = QString::fromStdString(varInfo.value);
+        addVariableRow(name, value, varInfo.type);
     }
 }
+
+void MainWindow::onLoadFromFileClicked()
+{
+    // Open .fsm file via file explorer:
+    QString filename = QFileDialog::getOpenFileName(nullptr, "Open Fsm File", QDir::homePath(),"Fsm File (*.fsm)");
+
+    if (filename.isEmpty())
+        return;
+
+    if (!filename.endsWith("fsm", Qt::CaseInsensitive))
+        filename += ".fsm";
+
+    // 1) load the node scene from the provided file:
+    graphModel->FromFile(filename.toStdString());
+
+    // 2) setup ui elements with the loaded automaton data
+    updateUiFromGraphModel();
+}
+
+
 /**
  *    UI ELEMENTS SINGALS
  *  ========================================================================
@@ -633,7 +625,7 @@ void MainWindow::on_button_Stop_clicked()
 
 void MainWindow::on_lineEdit_fsmName_textChanged(const QString &text)
 {
-    graphModel->SetFsmName(text);
+    graphModel->fsmName = text;
 }
 
 
@@ -649,6 +641,53 @@ void MainWindow::on_spinBox_transDelayMs_valueChanged(int value)
  */
 
 
+void MainWindow::addVariableRow(QString const name, QString const value, VarDataType type)
+{
+    // Create and setup elements that will be in each row
+    auto* label = new QLabel(name, this);
+
+    auto* lineEdit = new QLineEdit(this);
+    lineEdit->setText(value);
+    lineEdit->setFixedWidth(75);
+
+    auto* dropDown = new QComboBox(this);
+    dropDown->insertItem(0, "Int");
+    dropDown->insertItem(1, "Double");
+    dropDown->insertItem(2, "String");
+    auto dropDownTypeStr = QString::fromStdString(Automaton::varDataTypeAsString(type));
+    dropDown->setCurrentText(dropDownTypeStr);
+
+    auto* updateBtn = new QPushButton("✅", this);
+    updateBtn->setFixedWidth(25);
+
+    auto* removeBtn = new QPushButton("❌", this);
+    removeBtn->setFixedWidth(25);
+
+    // Get the existing layout where all the variable rows are:
+    QVBoxLayout* allRowsLayout = qobject_cast<QVBoxLayout*>(ui->hlayout_variables->layout());
+    // cretae a new row layout for new variable
+    QHBoxLayout* rowLayout = new QHBoxLayout(this);
+    rowLayout->addWidget(label);
+    rowLayout->addWidget(lineEdit);
+    rowLayout->addWidget(dropDown);
+    rowLayout->addWidget(updateBtn);
+    rowLayout->addWidget(removeBtn);
+    allRowsLayout->insertLayout(0, rowLayout);
+
+    // Store everything in one struct
+    variables[name] = VariableEntry{ rowLayout, lineEdit, dropDown, value };
+
+    // Update button logic
+    connect(updateBtn, &QPushButton::clicked, this, [this, name, lineEdit]() {
+        onVariableValueChangedByUser(name, lineEdit->text());
+    });
+
+    // Remove button logic
+    connect(removeBtn, &QPushButton::clicked, this, [this, name]() {
+        onRemoveWidget(name);
+    });
+}
+
 void MainWindow::onAddWidget()
 {
     QString newVarName = ui->lineEdit_newVarName->text();
@@ -663,35 +702,8 @@ void MainWindow::onAddWidget()
 
     ui->lineEdit_newVarName->clear();
 
-    QVBoxLayout* allRowsLayout = qobject_cast<QVBoxLayout*>(ui->hlayout_variables->layout());
-    QHBoxLayout* rowLayout = new QHBoxLayout(this);
-
-    auto* label = new QLabel(newVarName, this);
-    auto* lineEdit = new QLineEdit(this);
-    lineEdit->setFixedWidth(120);
-    auto* updateBtn = new QPushButton("✅", this);
-    updateBtn->setFixedWidth(25);
-    auto* removeBtn = new QPushButton("❌", this);
-    removeBtn->setFixedWidth(25);
-
-    rowLayout->addWidget(label);
-    rowLayout->addWidget(lineEdit);
-    rowLayout->addWidget(updateBtn);
-    rowLayout->addWidget(removeBtn);
-    allRowsLayout->insertLayout(0, rowLayout);
-
-    // Store everything in one struct
-    variables[newVarName] = VariableEntry{ rowLayout, lineEdit, "" };
-
-    // Update button logic
-    connect(updateBtn, &QPushButton::clicked, this, [this, newVarName, lineEdit]() {
-        onVariableValueChangedByUser(newVarName, lineEdit->text());
-    });
-
-    // Remove button logic
-    connect(removeBtn, &QPushButton::clicked, this, [this, newVarName]() {
-        onRemoveWidget(newVarName);
-    });
+    // Add a new default variable : Int with value of 0.
+    addVariableRow(newVarName, "0", VarDataType::Int);
 }
 
 void MainWindow::onVariableValueChangedByUser(const QString& variableName, const QString& newValue)
@@ -699,32 +711,7 @@ void MainWindow::onVariableValueChangedByUser(const QString& variableName, const
     // update the variable value n the QMap
     variables[variableName].varValue = newValue;
 
-    // Takto nějak si představuju, že by se předával typ
-    // respektive jakmile se klikne na ten checkbox u proměnné,
-    // tak se nastaví hodnota typu podle toho drop menu
-
-    QString type = "INT"; // DOUBLE, STRING, INT
-
-     if (type == "INT") {
-        bool ok = false;
-        int intValue = newValue.toInt(&ok);
-        if (ok)
-            fsmClient->sendSetVariable(variableName, intValue);
-        else
-            qWarning() << "Invalid int value for variable" << variableName << ":" << newValue;
-    } else if (type == "DOUBLE") {
-        bool ok = false;
-        double doubleValue = newValue.toDouble(&ok);
-        if (ok)
-            fsmClient->sendSetVariable(variableName, doubleValue);
-        else
-            qWarning() << "Invalid double value for variable" << variableName << ":" << newValue; 
-    } else if (type == "STRING") {
-        fsmClient->sendSetVariable(variableName, QJsonValue(newValue));
-    } else {
-        // fallback: send as string
-        fsmClient->sendSetVariable(variableName, QJsonValue(newValue));
-    }
+    fsmClient->sendSetVariable(variableName, QString::number( newValue.toInt() ));
 
     qWarning() << "User updated a variable " << variableName << ", new val: " << newValue;
 }

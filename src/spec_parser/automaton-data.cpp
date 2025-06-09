@@ -1,8 +1,10 @@
 /**
- * @brief Metody pro praci s datami ze specifikace automatu
+ * @brief A class representning an automaton
+ * @author Jakub Kovarik
  */
 
 #include "automaton-data.hpp"
+#include <algorithm>
 
 // Automaton info
 void Automaton::setName(const string& newName) {name = newName;}
@@ -11,26 +13,28 @@ string Automaton::getName() const {return name;}
 string Automaton::getDescription() const {return description;}
 
 // Variable
-void Automaton::addVariable(const string& varName, const string& varValue) {
-    variables[varName] = varValue;
-}
-
-void Automaton::setVariableValue(const string& varName, const string& newValue) {
-    if (variables.find(varName) != variables.end()) {
-        variables[varName] = newValue;
+string Automaton::varDataTypeAsString(VarDataType type)
+{
+    switch(type)
+    {
+    case VarDataType::Int: return "Int";
+    case VarDataType::Double: return "Double";
+    case VarDataType::String: return "String";
     }
 }
 
-bool Automaton::hasVariable(const string& varName) const {
-    return variables.find(varName) != variables.end();
+VarDataType Automaton::varDataTypeFromString(const string& str)
+{
+    if(str == "Double")return VarDataType::Int;
+    else if(str == "String")return VarDataType::String;
+    else return VarDataType::Int; // if not recognized, default to Int, fuck it
 }
 
-string Automaton::getVariableValue(const string& varName) const {
-    auto var = variables.find(varName);
-    return (var != variables.end()) ? var->second : "";
+void Automaton::addVariable(const string& varName, const string& varValue, const VarDataType type) {
+    variables.push_back(VariableInfo{varName, varValue, type});
 }
 
-unordered_map<string, string> Automaton::getVariables() const {return variables;}
+vector<VariableInfo> Automaton::getVariables() const { return variables; }
 
 // State
 void Automaton::addState(const string& stateName, const string& action) { 
@@ -41,11 +45,11 @@ void Automaton::appendToAction(const std::string& stateName, const std::string& 
     states[stateName] += line + "\n";
 }
 
-void Automaton::setStartState(const string& stateName) { // Treba pote skontrolovat, zda stav existuje
+void Automaton::setStartState(const string& stateName) {
     startState = stateName;
 }
 
-void Automaton::addFinalState(const string& stateName) { // Treba pote skontrolovat, zda stav existuje
+void Automaton::addFinalState(const string& stateName) { 
     if (!isFinalState(stateName))
         finalStates.push_back(stateName);
 }

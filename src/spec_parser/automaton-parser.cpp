@@ -1,8 +1,6 @@
 /**
- * @brief Ziskani dat z textove specifikace automatu
- * @todo Kontrola redefinice promennych/stavu/prechodu, 
- *       zda boli definovane start a finish stavy,
- *       pridat inputEvent u prechodu?
+ * @brief Parse a saved file to an automaton instance
+ * @author Jakub Kovarik
  */
 
 #include <iostream>
@@ -10,7 +8,9 @@
 #include <sstream>
 #include <string>
 #include <algorithm>
-#include "automaton-data.hpp" // trida Automaton
+#include "automaton-data.hpp"
+#include "automaton-parser.hpp"
+
 
 enum class ParserState {
     EXPECT_AUTOMATON,
@@ -27,14 +27,16 @@ enum class ParserState {
     DONE
 };
 
-// Kontrola klicoveho slova na zacatku radku
-bool startsWith(const string& str, const string& prefix) {
+// Keyword check 
+bool startsWith(const string& str, const string& prefix)
+{
     return str.size() >= prefix.size() &&
            str.compare(0, prefix.size(), prefix) == 0;
 }
 
-// Orezani komentaru a prazdnych znaku na zacatku/konci retezce
-string trim(const string& str) {
+// Trim comments and whitespace
+string trim(const string& str)
+{
     size_t hash = str.find('#');
     string noComment = (hash != string::npos) ? str.substr(0, hash) : str;
 
@@ -45,16 +47,23 @@ string trim(const string& str) {
     return noComment.substr(first, (last - first + 1));
 }
 
-void parseAutomaton(istream& in, Automaton& automaton) {
+// parse a text file to an automaton instance
+void AutomatonParser::FromFile(std::string const filename, Automaton& automaton) 
+{
     string rawLine;
     string line;
     ParserState state = ParserState::EXPECT_AUTOMATON;
     string currentState;
     Transition currentTransition;
+    ifstream in(filename);
 
-    while (getline(in, rawLine)) {
+    while (std::getline(in, rawLine)) 
+    {
         line = trim(rawLine);
-        if (line.empty()) continue;
+
+        // ignore empty lines and lines starting with a # which are used for UI node info
+        if (line.empty() || line[0] == '#')
+            continue;
 
         switch (state) {
             case ParserState::EXPECT_AUTOMATON:
@@ -116,9 +125,12 @@ void parseAutomaton(istream& in, Automaton& automaton) {
                 }
                 size_t eq = line.find('=');
                 if (eq != string::npos) {
-                    string name = trim(line.substr(0, eq));
+                    string typeAndName = trim(line.substr(0, eq));
+                    size_t spacePos = typeAndName.find(' ');
+                    string type = trim(typeAndName.substr(0, spacePos));
+                    string name = trim(typeAndName.substr(spacePos + 1));
                     string value = trim(line.substr(eq + 1));
-                    automaton.addVariable(name, value);
+                    automaton.addVariable(name, value, Automaton::varDataTypeFromString(type));
                 } else {
                     cerr << "Malformed VARS line: " << line << endl;
                 }
@@ -126,17 +138,23 @@ void parseAutomaton(istream& in, Automaton& automaton) {
             }
 
             case ParserState::EXPECT_STATE_OR_TRANSITION:
-                if (startsWith(line, "STATE ")) {
+                if (startsWith(line, "STATE ")) 
+                {
                     currentState = trim(line.substr(6));
                     automaton.addState(currentState);
                     state = ParserState::EXPECT_STATE_ACTION;
-                } else if (startsWith(line, "TRANSITION ")) {
+                } 
+                else if (startsWith(line, "TRANSITION "))
+                {
                     size_t arrow = line.find("->");
-                    if (arrow != string::npos) {
+                    if (arrow != string::npos)
+                    {
                         currentTransition.fromState = trim(line.substr(10, arrow - 10));
                         currentTransition.toState = trim(line.substr(arrow + 2));
                         state = ParserState::EXPECT_TRANSITION_CONDITION;
-                    } else {
+                    } 
+                    else
+                    {
                         cerr << "Malformed TRANSITION line: " << line << endl;
                     }
                 } else if (line == "END") {
@@ -146,7 +164,6 @@ void parseAutomaton(istream& in, Automaton& automaton) {
                     cerr << "Expected 'STATE', 'TRANSITION', or 'END', found: " << line << endl;
                 }
                 break;
-
             case ParserState::EXPECT_STATE_ACTION:
                 if (line == "ACTION") {
                     state = ParserState::INSIDE_STATE_ACTION;
@@ -159,22 +176,25 @@ void parseAutomaton(istream& in, Automaton& automaton) {
                 if (line == "END") {
                     state = ParserState::EXPECT_STATE_OR_TRANSITION;
                 } else {
-                    automaton.appendToAction(currentState, rawLine); // zachovalo sa odsadenie?
+                    automaton.appendToAction(currentState, rawLine);
                 }
                 break;
             
             case ParserState::EXPECT_TRANSITION_CONDITION:
-                if (startsWith(line, "CONDITION ")) {
-                    currentTransition.condition = trim(line.substr(10));
+                if (startsWith(line, "CONDITION"))
+                {
+                    currentTransition.condition = trim(line.substr(9));
                     state = ParserState::EXPECT_TRANSITION_DELAY;
-                } else {
+                } 
+                else
+                {
                     cerr << "Expected 'CONDITION', found: " << line << endl;
                 }
                 break;
 
             case ParserState::EXPECT_TRANSITION_DELAY:
-                if (startsWith(line, "DELAY ")) {
-                    string delayStr = trim(line.substr(6));
+                if (startsWith(line, "DELAY")) {
+                    string delayStr = trim(line.substr(5));
                     size_t pos = 0;
                     try {
                         int delay = stoi(delayStr, &pos);
@@ -199,51 +219,4 @@ void parseAutomaton(istream& in, Automaton& automaton) {
                 break;
         }
     }
-}
-
-
-// TEST
-int main(int argc, char* argv[]) {
-    if (argc < 2) {
-        cerr << "Usage: " << argv[0] << " input.txt\n";
-        return 1;
-    }
-
-    ifstream file(argv[1]);
-    if (!file) {
-        std::cerr << "Failed to open file: " << argv[1] << "\n";
-        return 1;
-    }
-
-    Automaton automaton;
-    parseAutomaton(file, automaton);
-
-    cout << "Automaton name: " << automaton.getName() << "\n";
-    cout << "Description: " << automaton.getDescription() << "\n";
-    cout << "Start state: " << automaton.getStartName() << "\n";
-
-    cout << "Final states:\n";
-    for (const auto& s : automaton.getFinalStates()) {
-        cout << "  " << s << "\n";
-    }
-
-    cout << "Variables:\n";
-    for (const auto& [name, value] : automaton.getVariables()) {
-        cout << "  " << name << " = " << value << "\n";
-    }
-
-    cout << "States:\n";
-    for (const auto& [name, _] : automaton.getStates()) {
-        cout << "  " << name << ":\n";
-        cout << automaton.getStateAction(name) << "\n";
-    }
-
-    cout << "Transitions:\n";
-    for (const auto& tr : automaton.getTransitions()) {
-        cout << "  " << tr.fromState << " -> " << tr.toState << "\n";
-        cout << "    Condition: " << tr.condition << "\n";
-        cout << "    Delay: " << tr.delay << "\n";
-    }
-
-    return 0;
 }

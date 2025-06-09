@@ -179,4 +179,3 @@ see LICENSE
 
 - Josef Ambruz
 - Jakub Kovařík
-- Michaela Capikova

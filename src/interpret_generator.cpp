@@ -111,11 +111,11 @@ QString to_python_value_literal(const std::string& val_str) {
     return to_python_string_literal(val_str);
 }
 
-QString transform_to_local_vars(const QString& code, const std::unordered_map<std::string, std::string>& variables) {
+QString transform_to_local_vars(const QString& code, const std::vector<VariableInfo>& variables) {
     QString result;
 
-    for (const auto& var_pair : variables) {
-        QString var_name = QString::fromStdString(var_pair.first);
+    for (const auto& var_info : variables) {
+        QString var_name = QString::fromStdString(var_info.name);
         result += result +  var_name + " = variables.get('" + var_name + "')\n";
     }
     result += "\n";
@@ -124,8 +124,8 @@ QString transform_to_local_vars(const QString& code, const std::unordered_map<st
 
     result += "\n";
 
-    for (const auto& var_pair : variables) {
-        QString var_name = QString::fromStdString(var_pair.first);
+    for (const auto& var_info : variables) {
+        QString var_name = QString::fromStdString(var_info.name);
         result += "fsm.set_variable('" + var_name + "', " + var_name + ")\n";
     }
 
@@ -137,10 +137,10 @@ QString transform_to_local_vars(const QString& code, const std::unordered_map<st
 }
 
 // Helper to replace variable names in code with variables.get('<name>')
-QString replace_variables_with_get(const QString& code, const std::unordered_map<std::string, std::string>& variables) {
+QString replace_variables_with_get(const QString& code, const std::vector<VariableInfo>& variables) {
     QString result = code;
-    for (const auto& var_pair : variables) {
-        QString var_name = QString::fromStdString(var_pair.first);
+    for (const auto& var_info : variables) {
+        QString var_name = QString::fromStdString(var_info.name);
         // Using word boundaries to avoid partial replacements
         QRegularExpression re("\\b" + QRegularExpression::escape(var_name) + "\\b");
         result.replace(re, "variables.get('" + var_name + "')");
@@ -301,10 +301,10 @@ void InterpretGenerator::generate(const Automaton& automaton, const QString& out
     if (automaton.getVariables().empty()) {
         outfile << "    # No initial variables defined in specification.\n";
     }
-    for (const auto& var_pair : automaton.getVariables()) {
+    for (const auto& var_info : automaton.getVariables()) {
         outfile << "    " << fsm_name << ".set_variable("
-                << to_python_string_literal(var_pair.first) << ", "
-                << to_python_value_literal(var_pair.second) << ")\n";
+                << to_python_string_literal(var_info.name) << ", "
+                << to_python_value_literal(var_info.value) << ")\n";
     }
     outfile << "\n";
 
