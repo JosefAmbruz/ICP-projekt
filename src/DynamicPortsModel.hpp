@@ -328,8 +328,6 @@ public:
      * @return The QJsonObject representing the model.
      */
     QJsonObject save() const;
-
-
     /**
      * @brief Loads a node from a QJsonObject.
      * @param nodeJson The QJsonObject containing node data.
