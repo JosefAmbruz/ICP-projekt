@@ -72,6 +72,8 @@ void MainWindow::initNodeCanvas()
 
     // Create a View for the scene
     auto* view = new GraphicsView(nodeScene, this);
+    view->setContextMenuPolicy(Qt::ActionsContextMenu);
+    view->insertAction(view->actions().front(), createNodeAction(*graphModel, *view));
 
     // Add the view with the QtNode scene to our UI
     auto* layout = new QVBoxLayout(ui->nodeCanvasContainer);
@@ -366,6 +368,8 @@ void MainWindow::onFsmClientError(const QString& err) {
     ui->textEdit_logOut->append("CLIENT ERROR: " + err);
     // Update UI
 }
+
+
 
 
 /**

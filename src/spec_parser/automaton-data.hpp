@@ -1,7 +1,3 @@
-/**
- * @brief Internal Automaton representation
- * @author Jakub Kovarik
- */
 #ifndef AUTOMATON_DATA_H
 #define AUTOMATON_DATA_H
 
