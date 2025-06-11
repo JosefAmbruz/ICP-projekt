@@ -430,16 +430,27 @@ void MainWindow::updateUiFromGraphModel()
     ui->lineEdit_fsmName->setText(graphModel->fsmName);
 
     // clear old variable rows in UI:
-    for(auto& varEntry: variables)
+    for (auto it = variables.begin(); it != variables.end(); ++it)
     {
-        // Remove all widgets in the row
-        while (varEntry.layout->count()) {
-            QLayoutItem* item = varEntry.layout->takeAt(0);
-            delete item->widget();
+        VariableEntry& entry = it.value();
+        QHBoxLayout* layout = entry.layout;
+
+        // Remove and delete each widget from the layout
+        while (layout->count() > 0)
+        {
+            QLayoutItem* item = layout->takeAt(0);
+            if (QWidget* widget = item->widget())
+                widget->deleteLater();  // safe deletion
+
             delete item;
         }
-        delete varEntry.layout;
+        // Delete the layout itself
+        delete layout;
     }
+
+    // Clear the map
+    variables.clear();
+
 
     // iterate all loaded variables and add them to ui sidepanel:
     for(auto& varInfo : graphModel->variables)

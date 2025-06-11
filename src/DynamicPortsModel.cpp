@@ -716,6 +716,7 @@ void DynamicPortsModel::Reset()
     _connectivity.clear();
     _nodePortCounts.clear();
     _nodeWidgets.clear();
+    variables.clear();
 
     _startStateId = 0;
     _nextNodeId = 1;
