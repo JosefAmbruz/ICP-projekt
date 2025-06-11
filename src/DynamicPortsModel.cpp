@@ -664,7 +664,7 @@ void DynamicPortsModel::FromFile(std::string const filename)
     fsmName = QString::fromStdString(automaton.getName());
 
     // 3) Connect states with transitions
-
+    QMap<NodeId, NodeId> nextFreeInPortIndex; // to keep track of each nodes used InPort indexes
     // iterate all nodes:
     for(auto& nodeId : _nodeIds)
     {
@@ -682,12 +682,14 @@ void DynamicPortsModel::FromFile(std::string const filename)
                     toStateNodeId = key;
 
             // find the first free InPort index of the node we want to make transition to:
-            NodeId inPortIdx = 0;
-            for(;!connectionPossible(ConnectionId{ nodeId, outPortIdx, toStateNodeId, inPortIdx }); inPortIdx++){}
+            NodeId inPortIdx = nextFreeInPortIndex.value(toStateNodeId, 0); // default to 0
 
-            // make the actual connection between two of the nodes:
-            auto connId = ConnectionId{ nodeId, outPortIdx, toStateNodeId, inPortIdx };
+             // make the actual connection between two of the nodes:
+            ConnectionId connId{ nodeId, outPortIdx, toStateNodeId, inPortIdx };
             addConnection(connId);
+
+            // Update the next free in-port index for this node
+            nextFreeInPortIndex[toStateNodeId] = inPortIdx + 1;
 
             // add action code and delay to connection
             _connectionCodes[connId] = QString::fromStdString(t.condition);
