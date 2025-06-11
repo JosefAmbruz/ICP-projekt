@@ -273,6 +273,16 @@ void MainWindow::onFsmClientMessageReceived(const QJsonObject& msg) {
         }
     }
 
+    // Fsm error
+    if (msg.contains("type") && msg["type"].toString() == "FSM_ERROR") {
+        if (msg.contains("payload") && msg["payload"].isObject()) {
+            QJsonObject payload = msg["payload"].toObject();
+            if (payload.contains("message")) {
+                QString error = payload["message"].toString();
+                ui->textEdit_logOut->append("FSM: Error occured: " + error);
+            }
+        }
+    }
 
     // Variable update
     if (msg.contains("type") && msg["type"].toString() == "VARIABLE_UPDATE") {
@@ -771,9 +781,25 @@ void MainWindow::onAddWidget()
 void MainWindow::onVariableValueChangedByUser(const QString& variableName, const QString& newValue)
 {
     // update the variable value n the QMap
+
     variables[variableName].varValue = newValue;
 
-    fsmClient->sendSetVariable(variableName, QString::number( newValue.toInt() ));
+    // Determine the variable type from the dropdown
+    VarDataType varType = Automaton::varDataTypeFromString(variables[variableName].dropDown->currentText().toStdString());
+    QJsonValue jsonValue;
+    switch (varType) {
+        case VarDataType::Int:
+            jsonValue = QJsonValue(newValue.toInt());
+            break;
+        case VarDataType::Double:
+            jsonValue = QJsonValue(newValue.toDouble());
+            break;
+        case VarDataType::String:
+        default:
+            jsonValue = QJsonValue(newValue);
+            break;
+    }
+    fsmClient->sendSetVariable(variableName, jsonValue);
 
     qWarning() << "User updated a variable " << variableName << ", new val: " << newValue;
 }
