@@ -700,10 +700,13 @@ void DynamicPortsModel::FromFile(std::string const filename)
 
 void DynamicPortsModel::Reset()
 {
-    for(auto& nodeId: _nodeIds)
+    auto nodeIdsCopy = _nodeIds;
+    for (auto nodeId : nodeIdsCopy)
     {
         deleteNode(nodeId);
     }
+
+   
 
     _nodeActionCodes.clear();
     _nodeFinalStates.clear();

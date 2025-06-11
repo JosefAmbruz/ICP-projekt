@@ -533,7 +533,7 @@ void MainWindow::onLoadFromFileClicked()
     graphModel->FromFile(filename.toStdString());
 
     // 2) setup ui elements with the loaded automaton data
-    updateUiFromGraphModel();
+    //updateUiFromGraphModel();
 }
 
 
