@@ -2,8 +2,6 @@
 
 A graphical editor and interpreter for designing, simulating, and running finite state machines (FSMs) with Python integration.
 
----
-
 ## Table of Contents
 
 - [Features](#features)
@@ -18,8 +16,6 @@ A graphical editor and interpreter for designing, simulating, and running finite
 - [License](#license)
 - [Authors](#authors)
 
----
-
 ## Features
 
 - Visual FSM editor with node-based interface
@@ -29,15 +25,48 @@ A graphical editor and interpreter for designing, simulating, and running finite
 - Logging and real-time output display
 - Save FSM projects into human readable, custom format
 
----
-
-## Incomplete/Missing Functionality
+## Incomplete/Missing Functionality (first submission only!)
 
 - Loading FSM from source file
 - Editing variables at runtime
 - Examples for testing
 
----
+## Features added in second submission
+
+- ✅ Load a Automaton from **human-readable** and editable text file (`.fsm` file extension)
+- ✅ Save current Automaton in the UI editor to a `.fsm` file
+
+  - ➡️ example of a `.fsm` file:
+
+    ```
+    #State 2;339;225;1;1
+    #State 1;-17;70;1;1
+    AUTOMATON my_fsm
+    DESCRIPTION "My Automaton"
+    START State_Initial
+    FINISH [StateA, StateB]
+    VARS
+    Int x = 0
+    String z = hello
+    STATE State 1
+    ACTION
+        x = x + 10
+        print(x)
+    END
+    ...
+    ```
+
+- ✅ Show the **current state** of a running Automaton
+  - ➡️ Current state of running Autoamton is displayed next to the `🟢Run` button.
+- ✅ Added a panel to **display live state** of variables and their values of a running Automaton.
+  - ➡️ Use the panel in bottom-right to add variables to your Automaton. Values will be in sync with the running Automaton.
+- ✅ Allow for **changing the variable values of a running Automaton**
+  - ➡️ While an Automaton is running, you can inject values into pre-defined variables using the bottom-right panel.
+- ✅ Improve live logging
+  - ➡️ more verbose and straight forward logging
+- ✅ Make User Interface more friendly and easy to use.
+- ✅ Autamtically detect if the running automaton is stuck.
+- ✅ Add examples for testing.
 
 ## Requirements
 
@@ -46,8 +75,6 @@ A graphical editor and interpreter for designing, simulating, and running finite
 - C++17 compatible compiler
 - Python 3.x (for FSM interpreter)
 - Doxygen (optional, for documentation)
-
----
 
 ## Installation
 
@@ -60,8 +87,6 @@ A graphical editor and interpreter for designing, simulating, and running finite
 
 2. **Install dependencies:**
    - Make sure Qt and Python 3 are installed and available in your PATH.
-
----
 
 ## Building the Project
 
@@ -89,8 +114,6 @@ A graphical editor and interpreter for designing, simulating, and running finite
    doxygen Doxyfile
    ```
 
----
-
 ## Usage
 
 1. **Run the application:**
@@ -117,8 +140,6 @@ A graphical editor and interpreter for designing, simulating, and running finite
 5. **Save/Load your FSM project:**
    - Use the menu options to save or load FSM designs.
 
----
-
 ## Project Structure
 
 ```
@@ -127,8 +148,6 @@ src/interpret/      # Python FSM interpreter and core logic
 tests/              # Test scripts and client examples
 docs/               # (Optional) Doxygen documentation output
 ```
-
----
 
 ## Doxygen Documentation
 
@@ -139,8 +158,6 @@ doxygen -g           # (first time only, to generate Doxyfile)
 doxygen Doxyfile
 xdg-open html/index.html
 ```
-
----
 
 ## Troubleshooting
 
@@ -153,19 +170,9 @@ xdg-open html/index.html
 - **Missing Qt modules:**  
   Install the required Qt development packages for your platform.
 
----
-
 ## Contributing
 
 Contributions are welcome! Please fork the repository and submit a pull request.
-
----
-
-## License
-
-see LICENSE
-
----
 
 ## References and Code Attribution
 
